@@ -1,12 +1,30 @@
 import { ethers } from "hardhat";
+import { wei } from "../test/utils";
 
+const dailyReward = wei(5);
+
+// Deprecated, deployed using hardhat-deploy script instead (see deploy folder in root)
 async function main() {
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const Energy = await ethers.getContractFactory("Energy");
+  const energy = await Energy.deploy();
+  await energy.deployed();
 
-  await greeter.deployed();
+  const EnergyRewarder = await ethers.getContractFactory("EnergyRewarder");
+  const energyRewarder = await EnergyRewarder.deploy(
+    dailyReward,
+    energy.address
+  );
 
-  console.log("Greeter deployed to:", greeter.address);
+  const FeatureVoting = await ethers.getContractFactory("FeatureVoting");
+  const featureVoting = await FeatureVoting.deploy(energy.address);
+
+  await energyRewarder.deployed();
+  await featureVoting.deployed();
+
+  console.log("Deployed contracts:");
+  console.log("Energy:", energy.address);
+  console.log("Energy Rewarder:", energyRewarder.address);
+  console.log("Feature Voting:", featureVoting.address);
 }
 
 main().catch((error) => {

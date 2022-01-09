@@ -6,6 +6,7 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+import "hardhat-deploy";
 
 dotenv.config();
 
@@ -47,6 +48,9 @@ const config: HardhatUserConfig = {
     gasPrice: 1,
     enabled: false,
     showTimeSpent: true,
+  },
+  namedAccounts: {
+    deployer: 0,
   },
 };
 

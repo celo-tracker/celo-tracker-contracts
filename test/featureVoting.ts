@@ -1,13 +1,6 @@
-import { BigNumber } from "@ethersproject/bignumber";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { awaitTx } from "./utils";
-
-const decimals = BigNumber.from(10).pow(18);
-
-function wei(value: number) {
-  return BigNumber.from(value).mul(decimals);
-}
+import { awaitTx, wei } from "./utils";
 
 describe("Feature Voting", function () {
   it("Should behave as expected", async function () {

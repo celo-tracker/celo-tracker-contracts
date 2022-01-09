@@ -1,6 +1,11 @@
 # Celo Tracker contracts
 
-This project contains the contracts used on https://celotracker.com to vote on feature requests and maybe other things in hte future.
+This project contains the contracts used on https://celotracker.com to vote on feature requests and maybe other things in the future.
+
+Mainnet deployment:
+- Energy: 0x305dbFD4e55C35c16aFdC5D8c470DaB195FA54C7
+- Energy Rewarder: 0x117867E95f79430ee4AFb9aeF9Dae133Fa091971
+- Feature Voting: 0x99e92CB3f7059874575DbbcDb1b74AD54d7ff98D
 
 # This is a Hardhat project
 
