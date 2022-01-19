@@ -28,7 +28,7 @@ contract SushiOperator is UniswapOperator, AccessControl {
 
   receive() external payable {}
 
-  function zapIntoSushi(
+  function swapAndZapIntoSushi(
     address from,
     address to,
     uint256 fromAmount,
@@ -40,18 +40,42 @@ contract SushiOperator is UniswapOperator, AccessControl {
     uint256 halfFromAmount = fromAmount / 2;
     uint256 toAmount = _swapUsingPool(from, to, halfFromAmount, minAmountOut);
 
-    _addLiquidityAndDepositInFarm(
-      from,
-      to,
-      halfFromAmount,
-      toAmount,
+    _zapIntoSushi(from, to, halfFromAmount, toAmount, percentMin, pid);
+  }
+
+  function zapIntoSushi(
+    address token0,
+    address token1,
+    uint256 token0Amount,
+    uint256 token1Amount,
+    uint256 percentMin,
+    uint256 pid
+  ) public {
+    IERC20(token0).safeTransferFrom(msg.sender, address(this), token0Amount);
+    IERC20(token1).safeTransferFrom(msg.sender, address(this), token1Amount);
+    
+    _zapIntoSushi(token0, token1, token0Amount, token1Amount, percentMin, pid);
+  }
+
+  function _zapIntoSushi(
+    address token0,
+    address token1,
+    uint256 token0Amount,
+    uint256 token1Amount,
+    uint256 percentMin,
+    uint256 pid) internal {
+     _addLiquidityAndDepositInFarm(
+      token0,
+      token1,
+      token0Amount,
+      token1Amount,
       percentMin,
       pid
     );
 
     // Return leftovers
-    IERC20(from).transfer(msg.sender, IERC20(from).balanceOf(address(this)));
-    IERC20(to).transfer(msg.sender, IERC20(to).balanceOf(address(this)));
+    IERC20(token0).transfer(msg.sender, IERC20(token0).balanceOf(address(this)));
+    IERC20(token1).transfer(msg.sender, IERC20(token1).balanceOf(address(this)));
   }
 
   function _addLiquidityAndDepositInFarm(
