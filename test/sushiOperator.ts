@@ -51,8 +51,8 @@ describe("SushiSwap Operator", function () {
           token0.address,
           token1.address,
           wei(10),
-          wei(0),
-          90,
+          wei(99, 10),
+          98,
           0
         )
     );
@@ -138,6 +138,6 @@ describe("SushiSwap Operator", function () {
     const miniChefToken1Balance = +reserve1.toString() * miniChefShare;
 
     expect(miniChefToken0Balance).to.gt(+wei(49, 10).toString());
-    expect(miniChefToken1Balance).to.gt(+wei(49, 10).toString());
+    expect(miniChefToken1Balance).to.gt(+wei(99, 10).toString());
   });
 });
