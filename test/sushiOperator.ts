@@ -29,7 +29,7 @@ describe("SushiSwap Operator", function () {
 
     [_, account1] = await ethers.getSigners();
 
-    operatorFactory = await ethers.getContractFactory("SushiOperator");
+    operatorFactory = await ethers.getContractFactory("Operator");
     operator = await operatorFactory.deploy(
       router.address,
       factory.address,
