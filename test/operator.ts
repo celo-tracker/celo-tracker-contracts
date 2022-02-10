@@ -6,9 +6,8 @@ import { setupMiniChef } from "./sushiswap";
 import { setupUniswapPools } from "./uniswap";
 import { awaitTx, wei } from "./utils";
 
-describe("SushiSwap Operator", function () {
-  // `beforeEach` will run before each test, re-deploying the contract every
-  // time. It receives a callback, which can be async.
+describe("Operator", function () {
+
   let token0: Contract;
   let token1: Contract;
   let router: Contract;
@@ -29,11 +28,16 @@ describe("SushiSwap Operator", function () {
 
     [_, account1] = await ethers.getSigners();
 
+    const rewarderFactory = await ethers.getContractFactory("RewarderTest");
+    const rewarder = await rewarderFactory.deploy()
+    await rewarder.deployed();
+
     operatorFactory = await ethers.getContractFactory("Operator");
     operator = await operatorFactory.deploy(
       router.address,
       factory.address,
-      miniChef.address
+      miniChef.address,
+      rewarder.address
     );
     await operator.deployed();
 
