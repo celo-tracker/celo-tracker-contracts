@@ -6,8 +6,7 @@ import { setupMiniChef } from "./sushiswap";
 import { setupUniswapPools } from "./uniswap";
 import { awaitTx, wei } from "./utils";
 
-describe("Operator", function () {
-
+describe("Sushi operator", function () {
   let token0: Contract;
   let token1: Contract;
   let router: Contract;
@@ -29,17 +28,18 @@ describe("Operator", function () {
     [_, account1] = await ethers.getSigners();
 
     const rewarderFactory = await ethers.getContractFactory("RewarderTest");
-    const rewarder = await rewarderFactory.deploy()
+    const rewarder = await rewarderFactory.deploy();
     await rewarder.deployed();
 
-    operatorFactory = await ethers.getContractFactory("Operator");
-    operator = await operatorFactory.deploy(
+    operatorFactory = await ethers.getContractFactory("OperatorProxy");
+    operator = await operatorFactory.deploy();
+    await operator.deployed();
+    await operator.setSushiOperator(
       router.address,
       factory.address,
       miniChef.address,
       rewarder.address
     );
-    await operator.deployed();
 
     pairFactory = await ethers.getContractFactory("UniswapV2Pair");
     lpTokenContract = await pairFactory.attach(lpToken);
@@ -51,7 +51,7 @@ describe("Operator", function () {
     await awaitTx(
       operator
         .connect(account1)
-        .swapAndZapIntoSushi(
+        ["swapAndZapInto(address,address,uint256,uint256,uint256,uint256)"](
           token0.address,
           token1.address,
           wei(10),
@@ -105,7 +105,14 @@ describe("Operator", function () {
     await awaitTx(
       operator
         .connect(account1)
-        .zapIntoSushi(token0.address, token1.address, wei(5), wei(10), 98, 0)
+        ["zapInto(address,address,uint256,uint256,uint256,uint256)"](
+          token0.address,
+          token1.address,
+          wei(5),
+          wei(10),
+          98,
+          0
+        )
     );
 
     // ASSERTIONS
@@ -144,57 +151,4 @@ describe("Operator", function () {
     expect(miniChefToken0Balance).to.gt(+wei(49, 10).toString());
     expect(miniChefToken1Balance).to.gt(+wei(99, 10).toString());
   });
-
-  it('zaps into ubeswap using one token', async function () {
-    await awaitTx(token0.transfer(account1.address, wei(10)))
-    await awaitTx(token0.connect(account1).approve(operator.address, wei(10)))
-    await awaitTx(
-      operator
-        .connect(account1)
-        .swapAndZapIntoUbeswap(
-          token0.address,
-          token1.address,
-          wei(10),
-          wei(99, 10),
-          98,
-        ),
-    )
-
-    // ASSERTIONS
-
-    // Operator doesn't have any leftovers.
-    expect(await token0.balanceOf(operator.address)).to.eq(0)
-    expect(await token1.balanceOf(operator.address)).to.eq(0)
-    expect(await lpTokenContract.balanceOf(operator.address)).to.eq(0)
-
-    // Account 1 has a balance of lp token.
-    const lpTokenbalance = await lpTokenContract.balanceOf(account1.address)
-    expect(lpTokenbalance).to.gt(0)
-  })
-
-  it("zaps into ubeswap using two tokens", async function () {
-      await awaitTx(token0.transfer(account1.address, wei(5)));
-      await awaitTx(token1.transfer(account1.address, wei(10)));
-      await awaitTx(token0.connect(account1).approve(operator.address, wei(5)));
-      await awaitTx(token1.connect(account1).approve(operator.address, wei(10)));
-      await awaitTx(
-        operator
-          .connect(account1)
-          .zapIntoUbeswap(token0.address, token1.address, wei(5), wei(10), 98)
-      );
-  
-      // ASSERTIONS
-  
-      const pairFactory = await ethers.getContractFactory("UniswapV2Pair");
-      const lpTokenContract = await pairFactory.attach(lpToken);
-  
-      // Operator doesn't have any leftovers.
-      expect(await token0.balanceOf(operator.address)).to.eq(0);
-      expect(await token1.balanceOf(operator.address)).to.eq(0);
-      expect(await lpTokenContract.balanceOf(operator.address)).to.eq(0);
-    
-      // Account 1 has a balance of lp token.
-      const lpTokenBalance = await lpTokenContract.balanceOf(account1.address);
-      expect(lpTokenBalance).to.gt(0);
-    });
 });
