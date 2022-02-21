@@ -36,7 +36,7 @@ contract SushiOperator is UniswapOperator, Ownable {
     rewarder = IRewarder(_rewarder);
   }
 
-  function swapAndZapInto(
+  function swapAndZapIn(
     address from,
     address to,
     uint256 fromAmount,
@@ -49,10 +49,10 @@ contract SushiOperator is UniswapOperator, Ownable {
     uint256 halfFromAmount = fromAmount / 2;
     uint256 toAmount = _swapUsingPool(from, to, halfFromAmount, minAmountOut);
 
-    _zapInto(from, to, halfFromAmount, toAmount, percentMin, pid, user);
+    _zapIn(from, to, halfFromAmount, toAmount, percentMin, pid, user);
   }
 
-  function zapInto(
+  function zapIn(
     address token0,
     address token1,
     uint256 token0Amount,
@@ -64,10 +64,10 @@ contract SushiOperator is UniswapOperator, Ownable {
     IERC20(token0).safeTransferFrom(msg.sender, address(this), token0Amount);
     IERC20(token1).safeTransferFrom(msg.sender, address(this), token1Amount);
 
-    _zapInto(token0, token1, token0Amount, token1Amount, percentMin, pid, user);
+    _zapIn(token0, token1, token0Amount, token1Amount, percentMin, pid, user);
   }
 
-  function _zapInto(
+  function _zapIn(
     address token0,
     address token1,
     uint256 token0Amount,

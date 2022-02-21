@@ -4,6 +4,7 @@ import { BigNumber, Contract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
 import { setupMiniChef } from "./sushiswap";
 import { setupUniswapPools } from "./uniswap";
+import { setupOperator } from "./operatorSetup";
 import { awaitTx, wei } from "./utils";
 
 describe("Ubeswap operator", function () {
@@ -14,7 +15,7 @@ describe("Ubeswap operator", function () {
   let lpToken: string;
   let _: SignerWithAddress;
   let account1: SignerWithAddress;
-  let operatorFactory: ContractFactory;
+  let miniChef: Contract;
   let operator: Contract;
   let pairFactory: ContractFactory;
   let lpTokenContract: Contract;
@@ -22,19 +23,9 @@ describe("Ubeswap operator", function () {
   beforeEach(async function () {
     ({ token0, token1, router, factory, lpToken } = await setupUniswapPools());
     [_, account1] = await ethers.getSigners();
+    ({ miniChef } = await setupMiniChef(lpToken));
 
-    const rewarderFactory = await ethers.getContractFactory("RewarderTest");
-    const rewarder = await rewarderFactory.deploy();
-    await rewarder.deployed();
-
-    operatorFactory = await ethers.getContractFactory("OperatorProxy");
-    operator = await operatorFactory.deploy();
-    await operator.deployed();
-    await operator.setUbeswapOperator(
-      router.address,
-      factory.address,
-      rewarder.address
-    );
+    operator = await setupOperator(router, factory, miniChef);
 
     pairFactory = await ethers.getContractFactory("UniswapV2Pair");
     lpTokenContract = await pairFactory.attach(lpToken);
@@ -46,7 +37,7 @@ describe("Ubeswap operator", function () {
     await awaitTx(
       operator
         .connect(account1)
-        ["swapAndZapInto(address,address,uint256,uint256,uint256)"](
+        .swapAndZapInWithUbeswap(
           token0.address,
           token1.address,
           wei(10),
@@ -75,13 +66,7 @@ describe("Ubeswap operator", function () {
     await awaitTx(
       operator
         .connect(account1)
-        ["zapInto(address,address,uint256,uint256,uint256)"](
-          token0.address,
-          token1.address,
-          wei(5),
-          wei(10),
-          98
-        )
+        .zapInWithUbeswap(token0.address, token1.address, wei(5), wei(10), 98)
     );
 
     // ASSERTIONS
