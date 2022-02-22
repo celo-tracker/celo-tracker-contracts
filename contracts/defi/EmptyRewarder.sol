@@ -4,7 +4,7 @@ pragma solidity ^0.8.2;
 import "./interfaces/IRewarder.sol";
 import "hardhat/console.sol";
 
-contract RewarderTest is IRewarder {
+contract EmptyRewarder is IRewarder {
 
     function onReward(
         address user,

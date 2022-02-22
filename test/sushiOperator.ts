@@ -2,9 +2,9 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
+import { setupOperator } from "./operatorSetup";
 import { setupMiniChef } from "./sushiswap";
 import { setupUniswapPools } from "./uniswap";
-import { setupOperator } from "./operatorSetup";
 import { awaitTx, wei } from "./utils";
 
 describe("Sushi operator", function () {
@@ -13,9 +13,7 @@ describe("Sushi operator", function () {
   let router: Contract;
   let factory: Contract;
   let lpToken: string;
-  let sushi: Contract;
   let miniChef: Contract;
-  let _: SignerWithAddress;
   let account1: SignerWithAddress;
   let operator: Contract;
   let pairFactory: ContractFactory;
@@ -23,9 +21,9 @@ describe("Sushi operator", function () {
 
   beforeEach(async function () {
     ({ token0, token1, router, factory, lpToken } = await setupUniswapPools());
-    ({ sushi, miniChef } = await setupMiniChef(lpToken));
+    ({ miniChef } = await setupMiniChef(lpToken));
 
-    [_, account1] = await ethers.getSigners();
+    [, account1] = await ethers.getSigners();
 
     operator = await setupOperator(router, factory, miniChef);
 
