@@ -4,11 +4,10 @@ import { BigNumber, Contract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
 import { setupMiniChef } from "./sushiswap";
 import { setupUniswapPools } from "./uniswap";
+import { setupOperator } from "./operatorSetup";
 import { awaitTx, wei } from "./utils";
 
-describe("SushiSwap Operator", function () {
-  // `beforeEach` will run before each test, re-deploying the contract every
-  // time. It receives a callback, which can be async.
+describe("Sushi operator", function () {
   let token0: Contract;
   let token1: Contract;
   let router: Contract;
@@ -18,7 +17,6 @@ describe("SushiSwap Operator", function () {
   let miniChef: Contract;
   let _: SignerWithAddress;
   let account1: SignerWithAddress;
-  let operatorFactory: ContractFactory;
   let operator: Contract;
   let pairFactory: ContractFactory;
   let lpTokenContract: Contract;
@@ -29,13 +27,7 @@ describe("SushiSwap Operator", function () {
 
     [_, account1] = await ethers.getSigners();
 
-    operatorFactory = await ethers.getContractFactory("SushiOperator");
-    operator = await operatorFactory.deploy(
-      router.address,
-      factory.address,
-      miniChef.address
-    );
-    await operator.deployed();
+    operator = await setupOperator(router, factory, miniChef);
 
     pairFactory = await ethers.getContractFactory("UniswapV2Pair");
     lpTokenContract = await pairFactory.attach(lpToken);
@@ -47,7 +39,7 @@ describe("SushiSwap Operator", function () {
     await awaitTx(
       operator
         .connect(account1)
-        .swapAndZapIntoSushi(
+        .swapAndZapInWithSushiwap(
           token0.address,
           token1.address,
           wei(10),
@@ -101,7 +93,14 @@ describe("SushiSwap Operator", function () {
     await awaitTx(
       operator
         .connect(account1)
-        .zapIntoSushi(token0.address, token1.address, wei(5), wei(10), 98, 0)
+        .zapInWithSushiswap(
+          token0.address,
+          token1.address,
+          wei(5),
+          wei(10),
+          98,
+          0
+        )
     );
 
     // ASSERTIONS
