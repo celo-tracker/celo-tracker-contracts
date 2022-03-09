@@ -15,15 +15,13 @@ contract UbeswapOperator is UniswapOperator, Ownable {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
-  address public immutable factory;
   IRewarder private rewarder;
 
   constructor(
     address _router,
     address _factory,
     address _rewarder
-  ) UniswapOperator(_router) {
-    factory = _factory;
+  ) UniswapOperator(_router, _factory) {
     rewarder = IRewarder(_rewarder);
   }
 

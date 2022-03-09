@@ -10,9 +10,11 @@ import { awaitTx, wei } from "./utils";
 describe("Sushi operator", function () {
   let token0: Contract;
   let token1: Contract;
+  let token2: Contract;
   let router: Contract;
   let factory: Contract;
   let lpToken: string;
+  let lpToken2: string;
   let miniChef: Contract;
   let account1: SignerWithAddress;
   let operator: Contract;
@@ -20,8 +22,9 @@ describe("Sushi operator", function () {
   let lpTokenContract: Contract;
 
   beforeEach(async function () {
-    ({ token0, token1, router, factory, lpToken } = await setupUniswapPools());
-    ({ miniChef } = await setupMiniChef(lpToken));
+    ({ token0, token1, token2, router, factory, lpToken, lpToken2 } =
+      await setupUniswapPools());
+    ({ miniChef } = await setupMiniChef(lpToken, lpToken2));
 
     [, account1] = await ethers.getSigners();
 
@@ -81,6 +84,29 @@ describe("Sushi operator", function () {
     // Zapped in with 10, sold half, ~5 was put in of token0.
     expect(miniChefToken0Balance).to.gt(+wei(49, 10).toString());
     expect(miniChefToken1Balance).to.gt(+wei(99, 10).toString());
+  });
+
+  it("zaps into sushi using a different poolId", async function () {
+    await awaitTx(token0.transfer(account1.address, wei(10)));
+    await awaitTx(token0.connect(account1).approve(operator.address, wei(10)));
+    await awaitTx(
+      operator
+        .connect(account1)
+        .swapAndZapInWithSushiwap(
+          token0.address,
+          token2.address,
+          wei(10),
+          wei(49, 10),
+          98,
+          1
+        )
+    );
+
+    // ASSERTIONS
+
+    // Account 1 has a balance in MiniChef.
+    const { amount } = await miniChef.userInfo(1, account1.address);
+    expect(amount).to.gt(0);
   });
 
   it("zaps into sushi using two tokens", async function () {

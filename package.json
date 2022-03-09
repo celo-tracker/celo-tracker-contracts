@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "compile": "hardhat compile",
+    "deploy": "hardhat --network mainnet deploy && hardhat --network mainnet sourcify",
     "lint": "eslint '**/*.{js,ts}'",
     "test": "hardhat test"
   },
