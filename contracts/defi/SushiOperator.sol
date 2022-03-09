@@ -3,7 +3,6 @@ pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/sushiswap/IMiniChefV2.sol";
 import "../interfaces/uniswap/IUniswapV2Router02.sol";
@@ -13,9 +12,7 @@ import "./interfaces/IRewarder.sol";
 
 contract SushiOperator is UniswapOperator, Ownable {
   using SafeMath for uint256;
-  using SafeERC20 for IERC20;
 
-  address public immutable factory;
   IMiniChefV2 public immutable miniChef;
   IRewarder private rewarder;
 
@@ -24,8 +21,7 @@ contract SushiOperator is UniswapOperator, Ownable {
     address _factory,
     address _miniChef,
     address _rewarder
-  ) UniswapOperator(_router) {
-    factory = _factory;
+  ) UniswapOperator(_router, _factory) {
     miniChef = IMiniChefV2(_miniChef);
     rewarder = IRewarder(_rewarder);
   }
@@ -45,7 +41,10 @@ contract SushiOperator is UniswapOperator, Ownable {
     uint256 pid,
     address user
   ) external {
-    IERC20(from).safeTransferFrom(msg.sender, address(this), fromAmount);
+    require(
+      IERC20(from).transferFrom(msg.sender, address(this), fromAmount),
+      "SushiOperator: Failed to transferFrom from amount"
+    );
     uint256 halfFromAmount = fromAmount / 2;
     uint256 toAmount = _swapUsingPool(from, to, halfFromAmount, minAmountOut);
 
@@ -61,8 +60,14 @@ contract SushiOperator is UniswapOperator, Ownable {
     uint256 pid,
     address user
   ) external {
-    IERC20(token0).safeTransferFrom(msg.sender, address(this), token0Amount);
-    IERC20(token1).safeTransferFrom(msg.sender, address(this), token1Amount);
+    require(
+      IERC20(token0).transferFrom(msg.sender, address(this), token0Amount),
+      "SushiOperator: Failed to transferFrom token0"
+    );
+    require(
+      IERC20(token1).transferFrom(msg.sender, address(this), token1Amount),
+      "SushiOperator: Failed to transferFrom token1"
+    );
 
     _zapIn(token0, token1, token0Amount, token1Amount, percentMin, pid, user);
   }

@@ -4,8 +4,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await deploy("OperatorProxy", {
     from: deployer,
     args: [
-      "0x82C8E6012208CDeDEFF769Ae5C063D5932DDd240",
-      "0x60D1Fc74Ba80B8439EC565518676dc2E0623cD96",
+      "0x76cAD835648Edee3d460Ba8c48517f6924A6CF4B", // SushiOperator
+      "0x3C655Fd232B11504C778021c304010f5aAF68958", // UbeOperator
     ],
     log: true,
   });
