@@ -2,8 +2,9 @@
 pragma solidity ^0.8.2;
 
 import "./Energy.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract EnergyRewarder {
+contract EnergyRewarder is Ownable {
   uint256 public dailyReward;
   Energy public energy;
 
@@ -12,6 +13,10 @@ contract EnergyRewarder {
   constructor(uint256 _dailyReward, address _energy) {
     dailyReward = _dailyReward;
     energy = Energy(_energy);
+  }
+
+  function setDailyReward(uint256 _dailyReward) public onlyOwner {
+    dailyReward = _dailyReward;
   }
 
   function mintDailyReward() public {
