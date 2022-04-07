@@ -20,7 +20,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-const privateKey = process.env.PRIVATE_KEY ?? "";
+// Defauly private key to be used on CI.
+const privateKey =
+  process.env.PRIVATE_KEY ??
+  "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 
 const config: HardhatUserConfig = {
   networks: {

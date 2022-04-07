@@ -9,6 +9,7 @@ contract FeatureVoting is Ownable {
   using SafeMath for uint256;
 
   struct Feature {
+    address creator;
     uint256 votes;
     string title;
     bool active;
@@ -19,28 +20,44 @@ contract FeatureVoting is Ownable {
 
   Feature[] public features;
 
-  event FeatureAdded(uint256 indexed index, string title);
+  event FeatureAdded(
+    uint256 indexed index,
+    string title,
+    address indexed creator
+  );
   event FeatureVoted(
     address indexed voter,
     uint256 indexed index,
     uint256 votes
   );
+  // Emitted when a feature request changes it's active status.
+  event FeatureStatusUpdated(uint256 indexed index, bool active, bool finished);
 
   constructor(address _energy) {
     energy = IERC20(_energy);
   }
 
-  function setActive(uint256 _index, bool _active) public onlyOwner {
-    features[_index].active = _active;
+  function totalFeaturesCount() external view returns (uint256 count) {
+    return features.length;
   }
 
-  function addFeature(string memory _title) public onlyOwner {
+  function setActive(uint256 _index, bool _active) external onlyOwner {
+    features[_index].active = _active;
+    emit FeatureStatusUpdated(_index, _active, features[_index].finished);
+  }
+
+  function addFeature(string memory _title, uint256 _votes) external returns (uint256 index) {
     Feature memory feature;
+    feature.creator = msg.sender;
     feature.active = true;
     feature.title = _title;
     features.push(feature);
 
-    emit FeatureAdded(features.length - 1, _title);
+    index = features.length - 1;
+
+    emit FeatureAdded(index, _title, msg.sender);
+
+    vote(index, _votes);
   }
 
   function vote(uint256 _index, uint256 _votes) public {
@@ -51,9 +68,10 @@ contract FeatureVoting is Ownable {
     emit FeatureVoted(msg.sender, _index, _votes);
   }
 
-  function featureFinished(uint256 _index) public onlyOwner {
+  function featureFinished(uint256 _index) external onlyOwner {
     require(!features[_index].finished, "Feature request already finished");
     features[_index].finished = true;
     features[_index].active = false;
+    emit FeatureStatusUpdated(_index, false, true);
   }
 }
