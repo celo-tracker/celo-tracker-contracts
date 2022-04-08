@@ -17,23 +17,23 @@ describe("Revo operator", function () {
     pairFactory: ContractFactory,
     lpTokenContract: Contract,
     farmBot: Contract,
-    reserve: SignerWithAddress,
-    owner: SignerWithAddress;
+    stakingRewardsContract: Contract;
 
   beforeEach(async function () {
-    ({ token0, token1, router, factory, lpToken, owner } =
-      await setupUniswapPools());
-
-    console.log(lpToken, "lpToken");
+    ({ token0, token1, router, factory, lpToken } = await setupUniswapPools());
 
     const rewarderFactory = await ethers.getContractFactory("EmptyRewarder");
     const rewarder = await rewarderFactory.deploy();
     await rewarder.deployed();
 
-    [, reserve, account1] = await ethers.getSigners();
+    [, account1] = await ethers.getSigners();
     pairFactory = await ethers.getContractFactory("UniswapV2Pair");
 
-    farmBot = await setupFarmBot(owner, reserve, token0, lpToken, router);
+    ({ farmBot, stakingRewardsContract } = await setupFarmBot(
+      token0,
+      lpToken,
+      router
+    ));
 
     lpTokenContract = pairFactory.attach(lpToken);
 
@@ -63,16 +63,18 @@ describe("Revo operator", function () {
     expect(await token1.balanceOf(operator.address)).to.eq(0);
     expect(await lpTokenContract.balanceOf(operator.address)).to.eq(0);
 
-    // Revo's farm bot has a balance of lp token
-    /* const lpTokenBalance = await lpTokenContract.balanceOf(farmBot.address);
-    expect(lpTokenBalance).to.gt(0); */
+    // Staking rewards contract used by farm bot has a balance of lp token
+    const lpTokenBalance = await lpTokenContract.balanceOf(
+      stakingRewardsContract.address
+    );
+    expect(lpTokenBalance).to.gt(0);
 
     // Account 1 has a balance of fp token in bot.
     const fpTokenBalance = await farmBot.balanceOf(account1.address);
     expect(fpTokenBalance).to.gt(0);
   });
 
-  /* it("zaps into ubeswap using two tokens", async function () {
+  it("zaps into revo using two tokens", async function () {
     await awaitTx(token0.transfer(account1.address, wei(5)));
     await awaitTx(token1.transfer(account1.address, wei(10)));
     await awaitTx(token0.connect(account1).approve(operator.address, wei(5)));
@@ -80,21 +82,24 @@ describe("Revo operator", function () {
     await awaitTx(
       operator
         .connect(account1)
-        .zapInWithUbeswap(token0.address, token1.address, wei(5), wei(10), 98)
+        .zapIn(token0.address, token1.address, wei(5), wei(10), 98)
     );
 
     // ASSERTIONS
-
-    const pairFactory = await ethers.getContractFactory("UniswapV2Pair");
-    const lpTokenContract = await pairFactory.attach(lpToken);
 
     // Operator doesn't have any leftovers.
     expect(await token0.balanceOf(operator.address)).to.eq(0);
     expect(await token1.balanceOf(operator.address)).to.eq(0);
     expect(await lpTokenContract.balanceOf(operator.address)).to.eq(0);
 
-    // Account 1 has a balance of lp token.
-    const lpTokenBalance = await lpTokenContract.balanceOf(account1.address);
+    // Staking rewards contract used by farm bot has a balance of lp token
+    const lpTokenBalance = await lpTokenContract.balanceOf(
+      stakingRewardsContract.address
+    );
     expect(lpTokenBalance).to.gt(0);
-  }); */
+
+    // Account 1 has a balance of fp token in bot.
+    const fpTokenBalance = await farmBot.balanceOf(account1.address);
+    expect(fpTokenBalance).to.gt(0);
+  });
 });

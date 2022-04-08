@@ -27,7 +27,7 @@ const privateKey =
 
 const config: HardhatUserConfig = {
   networks: {
-    /* mainnet: {
+    mainnet: {
       url: "https://forno.celo.org",
       chainId: 42220,
       accounts: [privateKey],
@@ -36,7 +36,7 @@ const config: HardhatUserConfig = {
       url: "https://alfajores-forno.celo-testnet.org",
       chainId: 44787,
       accounts: [privateKey],
-    }, */
+    },
   },
   solidity: {
     version: "0.8.4",

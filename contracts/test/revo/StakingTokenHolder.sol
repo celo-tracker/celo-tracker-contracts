@@ -155,11 +155,6 @@ abstract contract StakingTokenHolder is ERC20, AccessControl, Pausable {
   }
 
   function deposit(uint256 _lpAmount) external whenNotPaused {
-    console.log("lpAmount is %s", _lpAmount);
-    console.log("msg.sender is %s", msg.sender);
-    console.log("stakingHolder address is %s", address(this));
-    console.log("stakingToken address is %s", address(stakingToken));
-
     bool transferSuccess = stakingToken.transferFrom(
       msg.sender,
       address(this),
