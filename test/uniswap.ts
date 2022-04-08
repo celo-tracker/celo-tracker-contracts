@@ -56,6 +56,5 @@ export async function setupUniswapPools() {
     factory,
     lpToken: pair0,
     lpToken2: pair1,
-    owner,
   };
 }
