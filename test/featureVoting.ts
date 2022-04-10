@@ -37,43 +37,17 @@ describe("Feature Voting", function () {
     await expect(addr1Rewarder.mintDailyReward()).to.be.reverted;
 
     // ---------- FEATURE VOTING ----------
-    await awaitTx(featureVoting.addFeature("Feat 1"));
-    await awaitTx(featureVoting.addFeature("Feat 2"));
-
-    const addr1Voting = featureVoting.connect(addr1);
+    const addr1Voter = featureVoting.connect(addr1);
+    // Without approval it fails.
+    await expect(addr1Voter.addFeature("Feat", wei(1))).to.be.reverted;
 
     await awaitTx(
       energy.connect(addr1).approve(featureVoting.address, wei(100))
     );
-    await awaitTx(addr1Voting.vote(0, wei(2)));
-    await awaitTx(addr1Voting.vote(1, wei(1)));
+    await awaitTx(addr1Voter.addFeature("Feat 1", wei(1)));
+    await awaitTx(addr1Voter.addFeature("Feat 2", wei(1)));
 
-    expect(await energy.balanceOf(addr1.address)).to.eq(wei(2));
-
-    // Not enough balance, should revert
-    await expect(addr1Voting.vote(1, wei(3))).to.be.reverted;
-
-    await awaitTx(featureVoting.featureFinished(1));
-
-    // Feature inactive, should revert
-    await expect(addr1Voting.vote(1, wei(1))).to.be.reverted;
-
-    await awaitTx(featureVoting.setActive(0, false));
-
-    // Feature inactive, should revert
-    await expect(addr1Voting.vote(0, wei(1))).to.be.reverted;
-
-    await awaitTx(featureVoting.setActive(0, true));
-    await awaitTx(addr1Voting.vote(0, wei(1)));
-
-    const feature0 = await featureVoting.features(0);
-    expect(feature0.votes).to.eq(wei(3));
-    expect(feature0.finished).to.eq(false);
-    expect(feature0.active).to.eq(true);
-
-    const feature1 = await featureVoting.features(1);
-    expect(feature1.votes).to.eq(wei(1));
-    expect(feature1.finished).to.eq(true);
-    expect(feature1.active).to.eq(false);
+    await awaitTx(addr1Voter.vote(0, wei(2)));
+    await awaitTx(addr1Voter.vote(1, wei(1)));
   });
 });
