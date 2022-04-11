@@ -19,6 +19,15 @@ contract RevoOperator is UniswapOperator, Ownable {
   IRevoFarmBot public immutable farmBot;
   IRewarder private rewarder;
 
+  event Deposit(
+    address indexed user,
+    address token0,
+    address token1,
+    uint256 token0Amount,
+    uint256 token1Amount,
+    bool indexed swap
+  );
+
   constructor(
     address _router,
     address _factory,
@@ -47,6 +56,7 @@ contract RevoOperator is UniswapOperator, Ownable {
     uint256 toAmount = _swapUsingPool(from, to, halfFromAmount, minAmountOut);
 
     _zapIn(from, to, halfFromAmount, toAmount, percentMin, msg.sender);
+    emit Deposit(msg.sender, from, to, halfFromAmount, toAmount, true);
   }
 
   function zapIn(
@@ -60,6 +70,7 @@ contract RevoOperator is UniswapOperator, Ownable {
     IERC20(token1).safeTransferFrom(msg.sender, address(this), token1Amount);
 
     _zapIn(token0, token1, token0Amount, token1Amount, percentMin, msg.sender);
+    emit Deposit(msg.sender, token0, token1, token0Amount, token1Amount, false);
   }
 
   function _zapIn(

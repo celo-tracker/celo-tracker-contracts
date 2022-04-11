@@ -7,14 +7,13 @@ export async function setupFarmBot(
   lpTokenAddress: string,
   routerContract: Contract
 ) {
-  // ? ommit second item because it's being used as user account?
+  // ommit second address because it's being used as user account?
   const [deployer, , reserve] = await ethers.getSigners();
 
   const revoBountyFactory = await ethers.getContractFactory("MockRevoFees");
   const feeContract = await revoBountyFactory.deploy();
 
   const erc20Factory = await ethers.getContractFactory("MockERC20");
-
   const rewardsToken0Contract = await erc20Factory.deploy(
     "Mock rewards token 0",
     "RWD0",
@@ -65,5 +64,8 @@ export async function setupFarmBot(
   );
   await farmBot.deployed();
 
-  return { farmBot, stakingRewardsContract };
+  return {
+    farmBot,
+    stakingRewardsContract,
+  };
 }

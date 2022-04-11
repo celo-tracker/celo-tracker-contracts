@@ -62,6 +62,7 @@ describe("Revo operator", function () {
     expect(await token0.balanceOf(operator.address)).to.eq(0);
     expect(await token1.balanceOf(operator.address)).to.eq(0);
     expect(await lpTokenContract.balanceOf(operator.address)).to.eq(0);
+    expect(await farmBot.balanceOf(operator.address)).to.eq(0);
 
     // Staking rewards contract used by farm bot has a balance of lp token
     const lpTokenBalance = await lpTokenContract.balanceOf(
@@ -91,6 +92,7 @@ describe("Revo operator", function () {
     expect(await token0.balanceOf(operator.address)).to.eq(0);
     expect(await token1.balanceOf(operator.address)).to.eq(0);
     expect(await lpTokenContract.balanceOf(operator.address)).to.eq(0);
+    expect(await farmBot.balanceOf(operator.address)).to.eq(0);
 
     // Staking rewards contract used by farm bot has a balance of lp token
     const lpTokenBalance = await lpTokenContract.balanceOf(
