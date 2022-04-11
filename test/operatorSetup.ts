@@ -19,10 +19,10 @@ export async function setupOperator(
   );
   await sushiOperator.deployed();
 
-  const ubesapOperatorFactory = await ethers.getContractFactory(
+  const ubeswapOperatorFactory = await ethers.getContractFactory(
     "UbeswapOperator"
   );
-  const ubeswapOperator = await ubesapOperatorFactory.deploy(
+  const ubeswapOperator = await ubeswapOperatorFactory.deploy(
     router.address,
     factory.address,
     rewarder.address
