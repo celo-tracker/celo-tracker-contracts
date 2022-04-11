@@ -9,7 +9,7 @@ async function main() {
 
   const minterRole = await energy.MINTER_ROLE();
   await awaitTx(
-    energy.grantRole(minterRole, "0x117867E95f79430ee4AFb9aeF9Dae133Fa091971")
+    energy.grantRole(minterRole, "0x2D15e96ee514cE257f7f1869F98BeB00A26E7ff5")
   );
 }
 
