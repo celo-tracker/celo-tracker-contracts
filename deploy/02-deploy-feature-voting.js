@@ -3,7 +3,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
   await deploy("FeatureVoting", {
     from: deployer,
-    args: ["0x305dbFD4e55C35c16aFdC5D8c470DaB195FA54C7"],
+    args: ["0x84c4e1f2965235f60073e3029788888252c4557e"],
     log: true,
   });
 };
