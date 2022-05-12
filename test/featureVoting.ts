@@ -41,13 +41,17 @@ describe("Feature Voting", function () {
     // Without approval it fails.
     await expect(addr1Voter.addFeature("Feat", wei(1))).to.be.reverted;
 
-    await awaitTx(
-      energy.connect(addr1).approve(featureVoting.address, wei(100))
-    );
+    // Makeit a whitelisted spender
+    const spenderRole = await energy.SPENDER_ROLE();
+    await awaitTx(energy.grantRole(spenderRole, featureVoting.address));
+
     await awaitTx(addr1Voter.addFeature("Feat 1", wei(1)));
     await awaitTx(addr1Voter.addFeature("Feat 2", wei(1)));
 
     await awaitTx(addr1Voter.vote(0, wei(2)));
     await awaitTx(addr1Voter.vote(1, wei(1)));
+
+    const features = await featureVoting.getFeatures();
+    expect(features.length).to.eq(2);
   });
 });

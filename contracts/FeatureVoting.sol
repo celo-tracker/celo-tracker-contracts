@@ -41,6 +41,10 @@ contract FeatureVoting is Ownable {
     return features.length;
   }
 
+  function getFeatures() external view returns (Feature[] memory) {
+    return features;
+  }
+
   function setActive(uint256 _index, bool _active) external onlyOwner {
     features[_index].active = _active;
     emit FeatureStatusUpdated(_index, _active, features[_index].finished);
