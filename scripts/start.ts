@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import { ethers } from "hardhat";
 import { awaitTx } from "../test/utils";
 
@@ -30,13 +32,11 @@ async function markFeatureRequestAsFinished(featureIndex: number) {
     "0xF647cd04667320E653Ce8dF13010bD111F55fDb8"
   );
 
-  await awaitTx(
-    featureVoting.featureFinished(featureIndex)
-  );
+  await awaitTx(featureVoting.featureFinished(featureIndex));
 }
 
 async function main() {
-  await markFeatureRequestAsFinished(4)
+  await markFeatureRequestAsFinished(4);
 }
 
 main().catch((error) => {

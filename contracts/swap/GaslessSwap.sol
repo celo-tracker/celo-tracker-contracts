@@ -66,12 +66,9 @@ contract GaslessSwap is Ownable {
         ERC20 outputToken = ERC20(path[path.length - 1]);
         uint256 outputAmount = outputToken.balanceOf(address(this));
 
-        // Fee is the max between 0.1% and the max gas cost.
+        // Refund the max gas cost.
         uint256 gasCost = tx.gasprice * gasToUse;
-        uint256 percentFee = outputAmount / 1000;
-        uint256 fee = percentFee < gasCost ? gasCost : percentFee;
-
-        require(outputToken.transfer(beneficiary, fee));
+        require(outputToken.transfer(beneficiary, gasCost));
         require(
             outputToken.transfer(owner, outputToken.balanceOf(address(this)))
         );
