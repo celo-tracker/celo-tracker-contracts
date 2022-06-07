@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
+
 import { ethers } from "hardhat";
 import { awaitTx } from "../test/utils";
 
-async function main() {
+async function grantRoles() {
   const Energy = await ethers.getContractFactory("Energy");
   const energy = await Energy.attach(
     "0x84c4e1f2965235f60073e3029788888252c4557e"
@@ -22,6 +24,19 @@ async function main() {
   await awaitTx(
     energy.grantRole(spenderRole, "0xF647cd04667320E653Ce8dF13010bD111F55fDb8")
   );
+}
+
+async function markFeatureRequestAsFinished(featureIndex: number) {
+  const FeatureVoting = await ethers.getContractFactory("FeatureVoting");
+  const featureVoting = await FeatureVoting.attach(
+    "0xF647cd04667320E653Ce8dF13010bD111F55fDb8"
+  );
+
+  await awaitTx(featureVoting.featureFinished(featureIndex));
+}
+
+async function main() {
+  await markFeatureRequestAsFinished(4);
 }
 
 main().catch((error) => {
