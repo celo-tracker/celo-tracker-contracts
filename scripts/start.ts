@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { awaitTx } from "../test/utils";
 
@@ -35,8 +36,27 @@ async function markFeatureRequestAsFinished(featureIndex: number) {
   await awaitTx(featureVoting.featureFinished(featureIndex));
 }
 
+async function fetchBalances() {
+  const ERC20Balances = await ethers.getContractFactory("ERC20Balances");
+  const erc20Balances = await ERC20Balances.attach(
+    "0x9Fb1c7DE9A6FE1eE2fAdb22122931C1b9130111C"
+  );
+
+  console.log(
+    (
+      await erc20Balances.getBalances(
+        "0xB8aDc11DCFD2ED55D1c41410BfdEFa3C57b56F86",
+        [
+          "0x471EcE3750Da237f93B8E339c536989b8978a438",
+          "0x5fA00D2Ba520f95F548FF0813f9F74FACdF1b807",
+        ]
+      )
+    ).map((balance: BigNumber) => balance.toString())
+  );
+}
+
 async function main() {
-  await markFeatureRequestAsFinished(4);
+  await fetchBalances();
 }
 
 main().catch((error) => {
