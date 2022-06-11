@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { BigNumber, Contract } from "ethers";
+import { Contract } from "ethers";
 import { ethers } from "hardhat";
 import { awaitTx } from "./utils";
 
