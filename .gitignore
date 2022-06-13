@@ -2,6 +2,7 @@ scripts/.*
 
 node_modules/
 build/
+deployments/**/solcInputs
 node_modules
 .env
 coverage
