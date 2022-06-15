@@ -10,8 +10,8 @@ contract SwapWithFee is Ownable {
     uint256 public constant MAX_FEE_NUMERATOR = 6_000; // max 60 bps.
     uint256 public constant FEE_DENOMINATOR = 1_000_000;
 
-    uint256 feeNumerator;
-    address beneficiary;
+    uint256 public feeNumerator;
+    address public beneficiary;
     ISwappaRouterV1 private swappaRouter;
 
     event Swap(

@@ -55,8 +55,18 @@ async function fetchBalances() {
   );
 }
 
+async function updateSwapFee() {
+  const factory = await ethers.getContractFactory("SwapWithFee");
+  const swapper = await factory.attach(
+    "0x72546f7Ec395F34f7607Fc3E0811081EfC8A856c"
+  );
+
+  console.log((await swapper.feeNumerator()).toString());
+  // await awaitTx(swapper.setFeeNumerator(1000));
+}
+
 async function main() {
-  await fetchBalances();
+  await updateSwapFee();
 }
 
 main().catch((error) => {
