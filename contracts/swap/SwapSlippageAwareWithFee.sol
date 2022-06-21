@@ -6,7 +6,11 @@ import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/ISwappaRouter.sol";
 
-contract SwapSlippageAware is Ownable {
+contract SwapSlippageAwareWithFee is Ownable {
+    uint256 public constant MAX_FEE_NUMERATOR = 6_000; // max 60 bps.
+    uint256 public constant FEE_DENOMINATOR = 1_000_000;
+
+    uint256 public feeNumerator;
     address public beneficiary;
     ISwappaRouterV1 private swappaRouter;
 
@@ -16,18 +20,30 @@ contract SwapSlippageAware is Ownable {
         address indexed outputToken,
         uint256 inputAmount,
         uint256 outputAmount,
+        uint256 baseFee,
         uint256 fee
     );
     event BeneficiarySet(address newBeneficiary);
+    event FeeNumeratorSet(uint256 feeNumerator);
 
-    constructor(ISwappaRouterV1 _swappaRouter, address _beneficiary) {
+    constructor(
+        ISwappaRouterV1 _swappaRouter,
+        address _beneficiary,
+        uint256 initialFee
+    ) {
         swappaRouter = _swappaRouter;
         setBeneficiary(_beneficiary);
+        setFeeNumerator(initialFee);
     }
 
     function setBeneficiary(address _beneficiary) public onlyOwner {
         beneficiary = _beneficiary;
         emit BeneficiarySet(_beneficiary);
+    }
+
+    function setFeeNumerator(uint256 _feeNumerator) public onlyOwner {
+        feeNumerator = _feeNumerator;
+        emit FeeNumeratorSet(_feeNumerator);
     }
 
     function emergencyWithdrawal(address token) external onlyOwner {
@@ -46,19 +62,25 @@ contract SwapSlippageAware is Ownable {
         uint256 minOutputAmount,
         uint256 deadline
     ) external {
-        ERC20 inputToken = ERC20(path[0]);
-
+        uint256 baseFee = (inputAmount * feeNumerator) / FEE_DENOMINATOR;
+        if (baseFee > 0) {
+            require(
+                ERC20(path[0]).transferFrom(msg.sender, beneficiary, baseFee),
+                "Fee payment failed"
+            );
+        }
+        uint256 swapAmount = inputAmount - baseFee;
         require(
-            inputToken.transferFrom(msg.sender, address(this), inputAmount),
+            ERC20(path[0]).transferFrom(msg.sender, address(this), swapAmount),
             "Swap initial transfer failed. Did you approve the funds?"
         );
 
-        inputToken.approve(address(swappaRouter), inputAmount);
+        ERC20(path[0]).approve(address(swappaRouter), swapAmount);
         uint256 outputAmount = swappaRouter.swapExactInputForOutput(
             path,
             pairs,
             extras,
-            inputAmount,
+            swapAmount,
             minOutputAmount,
             address(this),
             deadline
@@ -67,29 +89,34 @@ contract SwapSlippageAware is Ownable {
         // Sanity check, already checked by Swappa. Can be removed to save gas if needed.
         require(outputAmount >= minOutputAmount, "Insufficient output amount!");
 
-        // We charge positive slippage as a fee.
-        uint256 fee = outputAmount <= quotedOutputAmount
-            ? 0
-            : outputAmount - quotedOutputAmount;
+        // We charge positive slippage as a fee if there is no base fee.
+        uint256 amountToReturn = outputAmount > quotedOutputAmount &&
+            baseFee == 0
+            ? quotedOutputAmount
+            : outputAmount;
 
         ERC20 outputToken = ERC20(path[path.length - 1]);
+        require(
+            outputToken.transfer(msg.sender, amountToReturn),
+            "Output payment failed"
+        );
+
+        uint256 fee = outputToken.balanceOf(address(this));
+
         if (fee > 0) {
             require(
                 outputToken.transfer(beneficiary, fee),
                 "Fee payment failed"
             );
         }
-        require(
-            outputToken.transfer(msg.sender, outputAmount - fee),
-            "Output payment failed"
-        );
 
         emit Swap(
             msg.sender,
             path[0],
             path[path.length - 1],
-            inputAmount,
-            outputAmount - fee,
+            swapAmount,
+            amountToReturn,
+            baseFee,
             fee
         );
     }
