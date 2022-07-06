@@ -5,6 +5,7 @@ build/
 deployments/**/solcInputs
 node_modules
 .env
+.env.all
 coverage
 coverage.json
 typechain
