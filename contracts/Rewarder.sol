@@ -1,13 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-// Después pasa claimear un usuario tiene que pasar el índice
-// en la lista del bloque en el que interactuó
-// y el índice del objetivo que cumplió para que el contrato
-// verifique ese bloque con el objetivo y vea si cumplió o no.
-// Si cumplió debería marcarlo como "objetivo cumplido" también
-// para que no pueda volver a hacerlo
-
 import "./Energy.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -18,29 +11,55 @@ contract Rewarder is Ownable {
     uint256 startingBlock;
     uint256 endingBlock;
     uint256 reward;
+    address origin;
   }
 
-  Objective[] public objectives;
+  Objective[] private objectives;
+
   // origin address => user address => block list
   mapping(address => mapping(address => uint256[])) public userInteractionsByOrigin;
+  // user address => objectiveIndex => claimed
   mapping(address => mapping(uint256 => bool)) public objectivesCompletedByUser;
 
-  // event triggered when user interacts with Rewarder
-  // is there a better name?
-  event UserInteraction(
-    address indexed user,
-    uint256 interactionIndex,
-    uint256 objectiveIndex,
-    address indexed originAddress
-  );
+  // un nombre mejor?
+  event UserInteraction(address indexed user, uint256 interactionIndex, address indexed originAddress);
+  event ObjectiveAdded(uint256 indexed index, uint256 reward, address indexed creator);
+  event RewardClaimed(address indexed user, uint256 reward, uint256 indexed objectiveIndex);
+
+  modifier hasObjective(address origin) {
+    bool objective = false;
+    for (uint256 i = 0; i < objectives.length; i++) {
+      if (objectives[i].origin == origin) {
+        objective = true;
+        break;
+      }
+    }
+    require(objective, "No reward assigned to msg.sender");
+    _;
+  }
 
   constructor(address _energy) {
     energy = Energy(_energy);
   }
 
-  function onReward(address user) public {
-    // save user interaction on userInteractionByContract
-    // emit UserInteraction event
+  function getObjectives() external view returns (Objective[] memory) {
+    return objectives;
+  }
+
+  function onReward(address user) public hasObjective(msg.sender) returns (uint256 interactionIndex) {
+    userInteractionsByOrigin[msg.sender][user].push(block.number);
+    interactionIndex = userInteractionsByOrigin[msg.sender][user].length - 1;
+    emit UserInteraction(user, interactionIndex, msg.sender);
+    return interactionIndex;
+  }
+
+  function getObjectiveByOrigin(address origin) public view returns (int256 index) {
+    for (uint256 i = 0; i < objectives.length; i++) {
+      if (objectives[i].origin == origin) {
+        return int256(i);
+      }
+    }
+    return -1;
   }
 
   function claimReward(
@@ -48,19 +67,36 @@ contract Rewarder is Ownable {
     uint256 interactionIndex,
     address originAddress
   ) public {
-    // verify that the interaction exists (userInteractionsByOrigin)
-    // and the objective is not completed (objectivesCompletedByUser)
-    // verify that the objective is valid (the blockNumber, retrived from userInteractionByOrigin
-    // should be between the blocks defined for the objective -> objective[objectiveIndes])
+    uint256 interactionBlock = userInteractionsByOrigin[originAddress][msg.sender][interactionIndex];
+    require(interactionBlock > 0, "There is no reward to claim");
+    require(!objectivesCompletedByUser[msg.sender][objectiveIndex], "The reward has been claimed");
+
+    Objective memory objective = objectives[objectiveIndex];
+    require(interactionBlock >= objective.startingBlock, "The reward can't be claimed yet");
+    require(interactionBlock < objective.endingBlock, "The reward has expired");
+    require(originAddress == objective.origin, "Objective doesn't match origin address");
+
+    objectivesCompletedByUser[msg.sender][objectiveIndex] = true;
+    energy.mint(msg.sender, objective.reward);
+
+    emit RewardClaimed(msg.sender, objective.reward, objectiveIndex);
   }
 
-  //   function addObjective(uint256 _dailyReward) public onlyOwner {
-  //     dailyReward = _dailyReward;
-  //   }
+  function addObjective(
+    uint256 reward,
+    address origin,
+    uint256 startingBlock,
+    uint256 endingBlock
+  ) public onlyOwner {
+    Objective memory objective;
+    objective.reward = reward;
+    objective.origin = origin;
+    objective.startingBlock = startingBlock;
+    objective.endingBlock = endingBlock;
+    objectives.push(objective);
 
-  //   function mintDailyReward() public {
-  //     require(block.timestamp > lastDailyReward[msg.sender] + 1 days, "Reward not available yet");
-  //     lastDailyReward[msg.sender] = block.timestamp;
-  //     energy.mint(msg.sender, dailyReward);
-  //   }
+    uint256 index = objectives.length - 1;
+
+    emit ObjectiveAdded(index, reward, msg.sender);
+  }
 }
