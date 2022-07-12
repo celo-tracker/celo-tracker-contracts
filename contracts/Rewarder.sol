@@ -3,6 +3,7 @@ pragma solidity ^0.8.2;
 
 import "./Energy.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
 
 contract Rewarder is Ownable {
   Energy public energy;
@@ -53,7 +54,7 @@ contract Rewarder is Ownable {
     return interactionIndex;
   }
 
-  function getObjectiveByOrigin(address origin) public view returns (int256 index) {
+  function getObjectiveByOrigin(address origin) external view returns (int256 index) {
     for (uint256 i = 0; i < objectives.length; i++) {
       if (objectives[i].origin == origin) {
         return int256(i);
@@ -65,21 +66,22 @@ contract Rewarder is Ownable {
   function claimReward(
     uint256 objectiveIndex,
     uint256 interactionIndex,
-    address originAddress
+    address originAddress,
+    address user
   ) public {
     uint256 interactionBlock = userInteractionsByOrigin[originAddress][msg.sender][interactionIndex];
     require(interactionBlock > 0, "There is no reward to claim");
-    require(!objectivesCompletedByUser[msg.sender][objectiveIndex], "The reward has been claimed");
+    require(!objectivesCompletedByUser[user][objectiveIndex], "The reward has been claimed");
 
     Objective memory objective = objectives[objectiveIndex];
     require(interactionBlock >= objective.startingBlock, "The reward can't be claimed yet");
     require(interactionBlock < objective.endingBlock, "The reward has expired");
     require(originAddress == objective.origin, "Objective doesn't match origin address");
 
-    objectivesCompletedByUser[msg.sender][objectiveIndex] = true;
-    energy.mint(msg.sender, objective.reward);
+    objectivesCompletedByUser[user][objectiveIndex] = true;
+    energy.mint(user, objective.reward);
 
-    emit RewardClaimed(msg.sender, objective.reward, objectiveIndex);
+    emit RewardClaimed(user, objective.reward, objectiveIndex);
   }
 
   function addObjective(

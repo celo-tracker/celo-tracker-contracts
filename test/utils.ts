@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 
 export async function awaitTx(txPromise: Promise<ContractTransaction>) {
   const tx = await txPromise;
-  await tx.wait();
+  return await tx.wait();
 }
 
 const decimals = BigNumber.from(10).pow(18);
