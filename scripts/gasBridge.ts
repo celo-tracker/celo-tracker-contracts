@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 
-import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { awaitTx, setAllowance, wei } from "../test/utils";
 
@@ -29,7 +28,9 @@ async function polygonCashierSetup() {
   const factory = await ethers.getContractFactory("GasBridgeCashier");
   const cashier = await factory.attach(POLYGON_CASHIER);
 
-  await awaitTx(cashier.setGasTokenPrice(CELO_CHAIN_ID, USDC_POLYGON, "1000000"));
+  await awaitTx(
+    cashier.setGasTokenPrice(CELO_CHAIN_ID, USDC_POLYGON, "1000000")
+  );
 }
 
 async function celoPayerSetup() {
