@@ -41,7 +41,7 @@ const config: HardhatUserConfig = {
       url: "https://polygon-rpc.com",
       chainId: 137,
       accounts: [privateKey],
-    }
+    },
   },
   solidity: {
     version: "0.8.13",
