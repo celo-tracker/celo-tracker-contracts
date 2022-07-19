@@ -38,7 +38,7 @@ const config: HardhatUserConfig = {
       accounts: [privateKey],
     },
     polygon: {
-      url: "https://polygon-rpc.com",
+      url: "https://rpc.ankr.com/polygon",
       chainId: 137,
       accounts: [privateKey],
     },
