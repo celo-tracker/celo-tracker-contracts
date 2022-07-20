@@ -8,6 +8,7 @@ import "../interfaces/curve/PoolInfo.sol";
 import "../interfaces/curve/MetapoolFactory.sol";
 import "../interfaces/curve/CryptoRegistry.sol";
 import "../interfaces/curve/CryptoFactory.sol";
+import "../interfaces/curve/CryptoFactoryPool.sol";
 
 contract CurveMulticall is Ownable {
     struct BasePool {
@@ -55,6 +56,7 @@ contract CurveMulticall is Ownable {
 
     struct CurveCryptoFactoryPool {
         address poolAddress;
+        address lpToken;
         address[2] tokens;
         uint256[2] balances;
         address gauge;
@@ -185,10 +187,12 @@ contract CurveMulticall is Ownable {
 
             address[2] memory tokens = factory.get_coins(pool);
             uint256[2] memory balances = factory.get_balances(pool);
+            address lpToken = CryptoFactoryPool(pool).token();
             address gauge = factory.get_gauge(pool);
 
             pools[index - from] = CurveCryptoFactoryPool(
                 pool,
+                lpToken,
                 tokens,
                 balances,
                 gauge
