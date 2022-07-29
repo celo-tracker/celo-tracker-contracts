@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { awaitTx } from "../test/utils";
 
