@@ -3,6 +3,7 @@
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { awaitTx } from "../test/utils";
+import { pathFinder } from "./pathFinder";
 
 async function grantRoles() {
   const Energy = await ethers.getContractFactory("Energy");
@@ -75,7 +76,7 @@ async function fetchUniV3Positions(tokenIds: number[]) {
 }
 
 async function main() {
-  await fetchUniV3Positions([95, 96]);
+  await pathFinder();
 }
 
 main().catch((error) => {
