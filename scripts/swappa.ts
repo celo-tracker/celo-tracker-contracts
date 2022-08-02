@@ -1,5 +1,4 @@
 import { ethers } from "hardhat";
-import { awaitTx } from "../test/utils";
 
 const UNI_V3_PAIR = "0x5ea0Edebe6a8e6ad1965BdB06A4630e8d3526360";
 

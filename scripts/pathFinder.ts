@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
+
 import { ethers } from "hardhat";
 import { awaitTx } from "../test/utils";
-import { PairUniswapV3 } from "../typechain";
 
 const PATH_FINDER = "0x40334830fF81a5982f4Ad08261c7653dfb61c5eD";
 const PAIR_GRAPH = "0x25B1a973dd031Ae702D1ebe46AF69b660Ce1c618";
@@ -49,23 +50,23 @@ async function swap() {
   const factory = await ethers.getContractFactory("PathFinder");
   const pathFinder = await factory.attach(PATH_FINDER);
 
-  // const best = await pathFinder.getBestSwapPath(
-  //   "0x765DE816845861e75A25fCA122bb6898B8B1282a",
-  //   "0x471EcE3750Da237f93B8E339c536989b8978a438",
-  //   "1" + "0".repeat(18),
-  //   1
-  // );
-  // console.info(best.bestOutput.toString());
-  // console.info(
-  //   best.bestPath.map((path: any) => ({
-  //     path: path.path,
-  //     pairs: path.pairs,
-  //     extras: path.extras,
-  //   }))
-  // );
+  const best = await pathFinder.getBestSwapPath(
+    "0x765DE816845861e75A25fCA122bb6898B8B1282a",
+    "0x471EcE3750Da237f93B8E339c536989b8978a438",
+    "1" + "0".repeat(18),
+    1
+  );
+  console.info(best.bestOutput.toString());
+  console.info(
+    best.bestPath.map((path: any) => ({
+      path: path.path,
+      pairs: path.pairs,
+      extras: path.extras,
+    }))
+  );
 }
 
 export async function pathFinder() {
   await pairs();
-  await swap();
+  // await swap();
 }
