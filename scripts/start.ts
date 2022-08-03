@@ -65,8 +65,17 @@ async function updateSwapFee() {
   // await awaitTx(swapper.setFeeNumerator(1000));
 }
 
+async function fetchUniV3Positions(tokenIds: number[]) {
+  const factory = await ethers.getContractFactory("UniV3Positions");
+  const univ3Positions = await factory.attach(
+    "0x9F41CD34214c6D6A39F89750b69241EE54398aEA"
+  );
+
+  console.log(await univ3Positions.getPositions(tokenIds));
+}
+
 async function main() {
-  await updateSwapFee();
+  await fetchUniV3Positions([95, 96]);
 }
 
 main().catch((error) => {

@@ -37,6 +37,11 @@ const config: HardhatUserConfig = {
       chainId: 44787,
       accounts: [privateKey],
     },
+    polygon: {
+      url: "https://rpc.ankr.com/polygon",
+      chainId: 137,
+      accounts: [privateKey],
+    },
   },
   solidity: {
     version: "0.8.13",

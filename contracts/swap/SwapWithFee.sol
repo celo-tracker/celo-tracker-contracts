@@ -51,14 +51,17 @@ contract SwapWithFee is Ownable {
         bytes[] calldata extras,
         uint256 inputAmount,
         uint256 minOutputAmount,
+        address to,
         uint256 deadline
     ) external {
         uint256 fee = (inputAmount * feeNumerator) / FEE_DENOMINATOR;
         address inputToken = path[0];
-        require(
-            ERC20(inputToken).transferFrom(msg.sender, beneficiary, fee),
-            "Fee payment failed"
-        );
+        if (fee > 0) {
+            require(
+                ERC20(inputToken).transferFrom(msg.sender, beneficiary, fee),
+                "Fee payment failed"
+            );
+        }
         uint256 swapAmount = inputAmount - fee;
         require(
             ERC20(inputToken).transferFrom(
@@ -76,7 +79,7 @@ contract SwapWithFee is Ownable {
             extras,
             swapAmount,
             minOutputAmount,
-            msg.sender,
+            to,
             deadline
         );
 
