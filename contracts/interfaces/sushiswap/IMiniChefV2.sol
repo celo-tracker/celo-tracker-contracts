@@ -53,4 +53,6 @@ interface IMiniChefV2 {
   function lpToken(uint256 index) external view returns (address);
 
   function poolInfo(uint256 id) external view returns (PoolInfo memory);
+  
+  function pendingSushi(uint256 _pid, address _user) external view returns (uint256 pending);
 }
