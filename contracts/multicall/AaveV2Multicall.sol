@@ -21,11 +21,12 @@ contract AaveV2Multicall is Ownable {
         // Stable Debt
         uint256 stableDebt;
         address stableDebtToken;
-        uint256 stableBorrowRate;
+        uint128 stableBorrowRate;
+        uint256 userStableBorrowRate;
         // Variable Debt
         uint256 variableDebt;
         address variableDebtToken;
-        uint256 variableBorrowRate;
+        uint128 variableBorrowRate;
     }
 
     function getReservesWithUserData(
@@ -48,7 +49,7 @@ contract AaveV2Multicall is Ownable {
                 uint256 currentVariableDebt,
                 ,
                 ,
-                uint256 stableBorrowRate,
+                uint256 userStableBorrowRate,
                 uint256 liquidityRate,
                 ,
                 bool usageAsCollateralEnabled
@@ -64,7 +65,8 @@ contract AaveV2Multicall is Ownable {
                 userConfig.isBorrowing(i),
                 currentStableDebt,
                 reserveData.stableDebtTokenAddress,
-                stableBorrowRate,
+                reserveData.currentStableBorrowRate,
+                userStableBorrowRate,
                 currentVariableDebt,
                 reserveData.variableDebtTokenAddress,
                 reserveData.currentVariableBorrowRate
