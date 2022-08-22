@@ -42,6 +42,11 @@ const config: HardhatUserConfig = {
       chainId: 137,
       accounts: [privateKey],
     },
+    rinkeby: {
+      url: "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      chainId: 4,
+      accounts: [privateKey],
+    },
   },
   solidity: {
     version: "0.8.13",

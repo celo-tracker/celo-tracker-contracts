@@ -9,18 +9,20 @@ import "../interfaces/curve/MetapoolFactory.sol";
 import "../interfaces/curve/CryptoRegistry.sol";
 import "../interfaces/curve/CryptoFactory.sol";
 import "../interfaces/curve/CryptoFactoryPool.sol";
+import "../interfaces/curve/CurvePool.sol";
 
 contract CurveMulticall is Ownable {
     struct BasePool {
         address poolAddress;
     }
 
-    struct CurvePool {
+    struct CurvePoolInfo {
         address poolAddress;
         address[8] tokens;
         address[8] underlyingTokens;
         uint256[8] balances;
         uint256[8] underlyingBalances;
+        uint256 fee;
         uint256[8] rates;
         address lpToken;
         bool isMeta;
@@ -38,6 +40,7 @@ contract CurveMulticall is Ownable {
         address[8] underlyingTokens;
         uint256[4] balances;
         uint256[8] underlyingBalances;
+        uint256 fee;
         bool isMeta;
         uint256 assetType;
         address gauge;
@@ -47,6 +50,7 @@ contract CurveMulticall is Ownable {
         address poolAddress;
         address[8] tokens;
         uint256[8] balances;
+        uint256 fee;
         address lpToken;
         string name;
         address[10] gauges;
@@ -59,6 +63,7 @@ contract CurveMulticall is Ownable {
         address lpToken;
         address[2] tokens;
         uint256[2] balances;
+        uint256 fee;
         address gauge;
     }
 
@@ -66,8 +71,8 @@ contract CurveMulticall is Ownable {
         Registry registry,
         uint16 from,
         uint16 pageSize
-    ) external view returns (CurvePool[] memory pools) {
-        pools = new CurvePool[](pageSize);
+    ) external view returns (CurvePoolInfo[] memory pools) {
+        pools = new CurvePoolInfo[](pageSize);
 
         for (uint16 index = from; index < from + pageSize; index++) {
             address pool = registry.pool_list(index);
@@ -87,12 +92,13 @@ contract CurveMulticall is Ownable {
             (address[10] memory gauges, int128[10] memory gaugeTypes) = registry
                 .get_gauges(pool);
 
-            pools[index - from] = CurvePool(
+            pools[index - from] = CurvePoolInfo(
                 pool,
                 tokens,
                 underlyingTokens,
                 balances,
                 underlyingBalances,
+                getPoolFee(pool),
                 rates,
                 lpToken,
                 isMeta,
@@ -137,6 +143,7 @@ contract CurveMulticall is Ownable {
                 underlyingTokens,
                 balances,
                 underlyingBalances,
+                getPoolFee(pool),
                 isMeta,
                 assetType,
                 gauge
@@ -166,6 +173,7 @@ contract CurveMulticall is Ownable {
                 pool,
                 tokens,
                 balances,
+                getPoolFee(pool),
                 lpToken,
                 name,
                 gauges,
@@ -195,8 +203,17 @@ contract CurveMulticall is Ownable {
                 lpToken,
                 tokens,
                 balances,
+                getPoolFee(pool),
                 gauge
             );
+        }
+    }
+
+    function getPoolFee(address pool) public view returns (uint256) {
+        try CurvePool(pool).fee() returns (uint256 fee) {
+            return fee;
+        } catch {
+            return 0;
         }
     }
 
