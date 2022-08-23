@@ -47,6 +47,16 @@ const config: HardhatUserConfig = {
       chainId: 4,
       accounts: [privateKey],
     },
+    avalanche: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      chainId: 43114,
+      accounts: [privateKey],
+    },
+    bsc: {
+      url: "https://bsc-dataseed1.binance.org",
+      chainId: 56,
+      accounts: [privateKey],
+    },
   },
   solidity: {
     version: "0.8.13",
