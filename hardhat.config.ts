@@ -57,6 +57,22 @@ const config: HardhatUserConfig = {
       chainId: 56,
       accounts: [privateKey],
     },
+    ethereum: {
+      url: "https://eth-mainnet.g.alchemy.com/v2/It_s0N2Ns0unCeTbDPPD054KzIkURJhz",
+      chainId: 1,
+      accounts: [privateKey],
+      gasPrice: 5000000000, // 3 gwei
+    },
+    optimism: {
+      url: "https://opt-mainnet.g.alchemy.com/v2/-WlyqPmXuAjDDBqsPrqbFa_ABibhsDb7",
+      chainId: 10,
+      accounts: [privateKey],
+    },
+    arbitrum: {
+      url: "https://arb-mainnet.g.alchemy.com/v2/uZg9FYtBK56ESsNlBroKeqW1kBU9WfVB",
+      chainId: 42161,
+      accounts: [privateKey],
+    },
   },
   solidity: {
     version: "0.8.13",
