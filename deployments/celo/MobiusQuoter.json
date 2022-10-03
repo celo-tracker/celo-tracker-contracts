@@ -1,0 +1,75 @@
+{
+  "address": "0xEC0FF14D6C9Afc709BA22dB5a9b17C6dF85Fb585",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "getQuote",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x247a09235c2e6e1398b9e6c0a81d0678cf4e77436b208f554fbeebb272c6e570",
+  "receipt": {
+    "to": null,
+    "from": "0x4A9797f16b7c0d66814988B167285394750cfb8b",
+    "contractAddress": "0xEC0FF14D6C9Afc709BA22dB5a9b17C6dF85Fb585",
+    "transactionIndex": 1,
+    "gasUsed": "274553",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x7798517005bcbd3ebc264c4c4bb45a6fd1f49d4b015107e5ffe1bc8227db133d",
+    "transactionHash": "0x247a09235c2e6e1398b9e6c0a81d0678cf4e77436b208f554fbeebb272c6e570",
+    "logs": [],
+    "blockNumber": 15405044,
+    "cumulativeGasUsed": "305765",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "05cd30db9ee15a7ba46b3788b2bcc303",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountIn\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"getQuote\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/multicall/tokenPrices/MobiusQuoter.sol\":\"MobiusQuoter\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":999999},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/interfaces/stableswap/ISwap.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\ninterface ISwap {\\n    function paused() external view returns (bool);\\n\\n    function getToken(uint8 index) external view returns (address);\\n\\n    function getBalances() external view returns (uint256[] memory);\\n\\n    function getSwapFee() external view returns (uint256);\\n\\n    function getAPrecise() external view returns (uint256);\\n\\n    function swap(\\n        uint8 tokenIndexFrom,\\n        uint8 tokenIndexTo,\\n        uint256 dx,\\n        uint256 minDy,\\n        uint256 deadline\\n    ) external returns (uint256);\\n\\n    function calculateSwap(\\n        uint8 tokenIndexFrom,\\n        uint8 tokenIndexTo,\\n        uint256 dx\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x370f4609b61ee26b8b66c31eb064cb6471f571d2044d1b4362292f1840e552a4\",\"license\":\"MIT\"},\"contracts/multicall/tokenPrices/MobiusQuoter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\nimport \\\"../../interfaces/stableswap/ISwap.sol\\\";\\nimport \\\"./Quoter.sol\\\";\\n\\ncontract MobiusQuoter is Quoter {\\n    function getQuote(\\n        address from,\\n        address,\\n        uint256 amountIn,\\n        bytes memory data\\n    ) external view returns (uint256) {\\n        address poolAddress;\\n        assembly {\\n            poolAddress := mload(add(data, 20))\\n        }\\n\\n        ISwap swapPool = ISwap(poolAddress);\\n        if (swapPool.getToken(0) == from) {\\n            return swapPool.calculateSwap(0, 1, amountIn);\\n        } else {\\n            return swapPool.calculateSwap(1, 0, amountIn);\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x6f25ed6d687541eefa4076ef331bb525a6493d4b946ef63e6bab2603c8a91486\",\"license\":\"MIT\"},\"contracts/multicall/tokenPrices/Quoter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\ninterface Quoter {\\n    function getQuote(\\n        address from,\\n        address to,\\n        uint256 amountIn,\\n        bytes calldata data\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xdc5db2309094f2fdb997460bfb383893b9d408b8cca8fe4db527bc9bea5fc914\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461001657610406908161001c8239f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c631cc47f0e146100295750600080fd5b3461012b5760807ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc36011261012b576004356100648161012e565b61006f60243561012e565b6064359067ffffffffffffffff808311610127573660238401121561012757826004013590811161011a575b604051926100d160207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8501160185610181565b8184523660248383010111610116579360208261010295949360246101129801838701378401015260443590610203565b6040519081529081906020820190565b0390f35b8480fd5b610122610151565b61009b565b8380fd5b80fd5b73ffffffffffffffffffffffffffffffffffffffff81160361014c57565b600080fd5b507f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b90601f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0910116810190811067ffffffffffffffff8211176101c257604052565b6101ca610151565b604052565b9081602091031261014c57516101e48161012e565b90565b506040513d6000823e3d90fd5b9081602091031261014c575190565b9091610229601461024292015173ffffffffffffffffffffffffffffffffffffffff1690565b73ffffffffffffffffffffffffffffffffffffffff1690565b90604051927f82b86600000000000000000000000000000000000000000000000000000000008452602093849283828061028460048201906000602083019252565b0381885afa9182156103c3575b600092610394575b5073ffffffffffffffffffffffffffffffffffffffff91821691160361034a576040517fa95b089f000000000000000000000000000000000000000000000000000000008152600060048201526001602482015260448101919091529182908180606481015b03915afa91821561033d575b60009261031757505090565b6101e49250803d10610336575b61032e8183610181565b8101906101f4565b503d610324565b6103456101e7565b61030b565b6040517fa95b089f000000000000000000000000000000000000000000000000000000008152600160048201526000602482015260448101919091529182908180606481016102ff565b6103b5919250843d86116103bc575b6103ad8183610181565b8101906101cf565b9038610299565b503d6103a3565b6103cb6101e7565b61029156fea2646970667358221220e2e0de8ec436ae2c63f49918036243776197e1de46cef1db0b34a0e0749f9a2d64736f6c634300080d0033",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b6000803560e01c631cc47f0e146100295750600080fd5b3461012b5760807ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc36011261012b576004356100648161012e565b61006f60243561012e565b6064359067ffffffffffffffff808311610127573660238401121561012757826004013590811161011a575b604051926100d160207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8501160185610181565b8184523660248383010111610116579360208261010295949360246101129801838701378401015260443590610203565b6040519081529081906020820190565b0390f35b8480fd5b610122610151565b61009b565b8380fd5b80fd5b73ffffffffffffffffffffffffffffffffffffffff81160361014c57565b600080fd5b507f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b90601f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0910116810190811067ffffffffffffffff8211176101c257604052565b6101ca610151565b604052565b9081602091031261014c57516101e48161012e565b90565b506040513d6000823e3d90fd5b9081602091031261014c575190565b9091610229601461024292015173ffffffffffffffffffffffffffffffffffffffff1690565b73ffffffffffffffffffffffffffffffffffffffff1690565b90604051927f82b86600000000000000000000000000000000000000000000000000000000008452602093849283828061028460048201906000602083019252565b0381885afa9182156103c3575b600092610394575b5073ffffffffffffffffffffffffffffffffffffffff91821691160361034a576040517fa95b089f000000000000000000000000000000000000000000000000000000008152600060048201526001602482015260448101919091529182908180606481015b03915afa91821561033d575b60009261031757505090565b6101e49250803d10610336575b61032e8183610181565b8101906101f4565b503d610324565b6103456101e7565b61030b565b6040517fa95b089f000000000000000000000000000000000000000000000000000000008152600160048201526000602482015260448101919091529182908180606481016102ff565b6103b5919250843d86116103bc575b6103ad8183610181565b8101906101cf565b9038610299565b503d6103a3565b6103cb6101e7565b61029156fea2646970667358221220e2e0de8ec436ae2c63f49918036243776197e1de46cef1db0b34a0e0749f9a2d64736f6c634300080d0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

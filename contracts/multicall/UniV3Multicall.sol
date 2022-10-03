@@ -28,12 +28,12 @@ contract UniV3Multicall is Ownable {
 
         for (uint16 index = 0; index < poolAddresses.length; index++) {
             IUniswapV3Pool pool = IUniswapV3Pool(poolAddresses[index]);
-            uint256 token0Balance = ERC20(pool.token0()).balanceOf(
-                address(pool)
-            );
-            uint256 token1Balance = ERC20(pool.token1()).balanceOf(
-                address(pool)
-            );
+            uint256 token0Balance = balanceOf(pool.token0(), address(pool));
+            uint256 token1Balance = balanceOf(pool.token1(), address(pool));
+
+            if (token0Balance == 0 || token1Balance == 0) {
+                continue;
+            }
 
             uint128 liquidity = pool.liquidity();
             uint256 price = 0;
@@ -50,6 +50,21 @@ contract UniV3Multicall is Ownable {
                 token1Balance,
                 price
             );
+        }
+    }
+
+    function balanceOf(address token, address target)
+        internal
+        view
+        returns (uint256)
+    {
+        if (token.code.length == 0) {
+            return 0;
+        }
+        try ERC20(token).balanceOf(target) returns (uint256 balance) {
+            return balance;
+        } catch {
+            return 0;
         }
     }
 }

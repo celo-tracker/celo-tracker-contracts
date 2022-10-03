@@ -48,7 +48,7 @@ const config: HardhatUserConfig = {
       accounts: [privateKey],
     },
     avalanche: {
-      url: "https://api.avax.network/ext/bc/C/rpc",
+      url: "https://nd-072-947-437.p2pify.com/8c55821054034c5cde03e84364fb380a/ext/bc/C/rpc",
       chainId: 43114,
       accounts: [privateKey],
     },
@@ -61,7 +61,7 @@ const config: HardhatUserConfig = {
       url: "https://eth-mainnet.g.alchemy.com/v2/It_s0N2Ns0unCeTbDPPD054KzIkURJhz",
       chainId: 1,
       accounts: [privateKey],
-      gasPrice: 5000000000, // 3 gwei
+      gasPrice: 4000000000, // 4 gwei
     },
     optimism: {
       url: "https://opt-mainnet.g.alchemy.com/v2/-WlyqPmXuAjDDBqsPrqbFa_ABibhsDb7",

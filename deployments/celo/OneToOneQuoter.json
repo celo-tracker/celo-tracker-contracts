@@ -1,0 +1,75 @@
+{
+  "address": "0xf412dc651fB825A5e54Bfb5d1cB8e8c551b3dB42",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "getQuote",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x30a88381ce82d592e566c87b4a036cc0787fcc733818f243e7890eee7139f9e9",
+  "receipt": {
+    "to": null,
+    "from": "0x4A9797f16b7c0d66814988B167285394750cfb8b",
+    "contractAddress": "0xf412dc651fB825A5e54Bfb5d1cB8e8c551b3dB42",
+    "transactionIndex": 2,
+    "gasUsed": "154779",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x4174057af37864946fb640ff4520989de6693762df3024b54d63556be98dbed4",
+    "transactionHash": "0x30a88381ce82d592e566c87b4a036cc0787fcc733818f243e7890eee7139f9e9",
+    "logs": [],
+    "blockNumber": 15430097,
+    "cumulativeGasUsed": "506732",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "74d906cc6e1b7806b4be2f6afc3e7d9f",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountIn\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"getQuote\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/multicall/tokenPrices/OneToOneQuoter.sol\":\"OneToOneQuoter\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":999999},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/multicall/tokenPrices/OneToOneQuoter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\nimport \\\"./Quoter.sol\\\";\\n\\ncontract OneToOneQuoter is Quoter {\\n    function getQuote(\\n        address,\\n        address,\\n        uint256 amountIn,\\n        bytes memory\\n    ) external pure returns (uint256) {\\n        return amountIn;\\n    }\\n}\\n\",\"keccak256\":\"0xc818757f3802e5c12f9d916468e0a45c7a35613dbe1ade0d6f7a851e86161cad\",\"license\":\"MIT\"},\"contracts/multicall/tokenPrices/Quoter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\ninterface Quoter {\\n    function getQuote(\\n        address from,\\n        address to,\\n        uint256 amountIn,\\n        bytes calldata data\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xdc5db2309094f2fdb997460bfb383893b9d408b8cca8fe4db527bc9bea5fc914\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60808060405234610016576101d7908161001c8239f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c631cc47f0e146100295750600080fd5b346101235760807ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc36011261012357610060610126565b5061006961014e565b5060643567ffffffffffffffff80821161011f573660238301121561011f57816004013590808211610112575b604051907fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0603f81601f860116011682019082821090821117610105575b60405281815236602483850101116101015781602460209401848301370101526040516044358152602090f35b8380fd5b61010d610171565b6100d4565b61011a610171565b610096565b8280fd5b80fd5b6004359073ffffffffffffffffffffffffffffffffffffffff8216820361014957565b600080fd5b6024359073ffffffffffffffffffffffffffffffffffffffff8216820361014957565b507f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fdfea2646970667358221220745457bcb6f5c762dd920d482e5a8f7d61c500ccabe3d8423163c2aae5b5fd3564736f6c634300080d0033",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b6000803560e01c631cc47f0e146100295750600080fd5b346101235760807ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc36011261012357610060610126565b5061006961014e565b5060643567ffffffffffffffff80821161011f573660238301121561011f57816004013590808211610112575b604051907fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0603f81601f860116011682019082821090821117610105575b60405281815236602483850101116101015781602460209401848301370101526040516044358152602090f35b8380fd5b61010d610171565b6100d4565b61011a610171565b610096565b8280fd5b80fd5b6004359073ffffffffffffffffffffffffffffffffffffffff8216820361014957565b600080fd5b6024359073ffffffffffffffffffffffffffffffffffffffff8216820361014957565b507f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fdfea2646970667358221220745457bcb6f5c762dd920d482e5a8f7d61c500ccabe3d8423163c2aae5b5fd3564736f6c634300080d0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

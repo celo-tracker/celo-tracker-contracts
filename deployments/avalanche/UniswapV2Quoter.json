@@ -1,0 +1,75 @@
+{
+  "address": "0x1E61F5e50092a39B996488F302cCa1F40820aeB6",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "getQuote",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x0da7621afd1b10e35c60917e5275b6296f906236e2cc097d3ea5078f88274e84",
+  "receipt": {
+    "to": null,
+    "from": "0x4A9797f16b7c0d66814988B167285394750cfb8b",
+    "contractAddress": "0x1E61F5e50092a39B996488F302cCa1F40820aeB6",
+    "transactionIndex": 2,
+    "gasUsed": "367513",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xca6cb7e2c8d9217404a1ec406a90714f17b458ff2e63554301238ad8a51c783d",
+    "transactionHash": "0x0da7621afd1b10e35c60917e5275b6296f906236e2cc097d3ea5078f88274e84",
+    "logs": [],
+    "blockNumber": 20521375,
+    "cumulativeGasUsed": "688349",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 2,
+  "solcInputHash": "3c4cd95531468247b93fb9fd0589d12f",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountIn\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"getQuote\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/multicall/tokenPrices/UniswapV2Quoter.sol\":\"UniswapV2Quoter\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":999999},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/interfaces/uniswap/IUniswapV2Pair.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\ninterface IUniswapV2Pair {\\n    event Approval(address indexed owner, address indexed spender, uint value);\\n    event Transfer(address indexed from, address indexed to, uint value);\\n\\n    function name() external pure returns (string memory);\\n    function symbol() external pure returns (string memory);\\n    function decimals() external pure returns (uint8);\\n    function totalSupply() external view returns (uint);\\n    function balanceOf(address owner) external view returns (uint);\\n    function allowance(address owner, address spender) external view returns (uint);\\n\\n    function approve(address spender, uint value) external returns (bool);\\n    function transfer(address to, uint value) external returns (bool);\\n    function transferFrom(address from, address to, uint value) external returns (bool);\\n\\n    function DOMAIN_SEPARATOR() external view returns (bytes32);\\n    function PERMIT_TYPEHASH() external pure returns (bytes32);\\n    function nonces(address owner) external view returns (uint);\\n\\n    function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external;\\n\\n    event Mint(address indexed sender, uint amount0, uint amount1);\\n    event Burn(address indexed sender, uint amount0, uint amount1, address indexed to);\\n    event Swap(\\n        address indexed sender,\\n        uint amount0In,\\n        uint amount1In,\\n        uint amount0Out,\\n        uint amount1Out,\\n        address indexed to\\n    );\\n    event Sync(uint112 reserve0, uint112 reserve1);\\n\\n    function MINIMUM_LIQUIDITY() external pure returns (uint);\\n    function factory() external view returns (address);\\n    function token0() external view returns (address);\\n    function token1() external view returns (address);\\n    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);\\n    function price0CumulativeLast() external view returns (uint);\\n    function price1CumulativeLast() external view returns (uint);\\n    function kLast() external view returns (uint);\\n\\n    function mint(address to) external returns (uint liquidity);\\n    function burn(address to) external returns (uint amount0, uint amount1);\\n    function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data) external;\\n    function skim(address to) external;\\n    function sync() external;\\n\\n    function initialize(address, address) external;\\n}\\n\",\"keccak256\":\"0x57d6a1a30d76f5ae8b7d375bbd336bea0d7ccc217690b72d691f6d564baf7196\",\"license\":\"MIT\"},\"contracts/multicall/tokenPrices/Quoter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\ninterface Quoter {\\n    function getQuote(\\n        address from,\\n        address to,\\n        uint256 amountIn,\\n        bytes calldata data\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xdc5db2309094f2fdb997460bfb383893b9d408b8cca8fe4db527bc9bea5fc914\",\"license\":\"MIT\"},\"contracts/multicall/tokenPrices/UniswapV2Quoter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\nimport \\\"../../interfaces/uniswap/IUniswapV2Pair.sol\\\";\\nimport \\\"./Quoter.sol\\\";\\n\\ncontract UniswapV2Quoter is Quoter {\\n    function getQuote(\\n        address from,\\n        address,\\n        uint256 amountIn,\\n        bytes memory data\\n    ) external view returns (uint256) {\\n        uint256 fee = uint256(10000) - uint8(data[20]);\\n        address pairAddress;\\n        assembly {\\n            pairAddress := mload(add(data, 20))\\n        }\\n\\n        IUniswapV2Pair pair = IUniswapV2Pair(pairAddress);\\n\\n        try pair.getReserves() returns (\\n            uint112 reserve0,\\n            uint112 reserve1,\\n            uint32\\n        ) {\\n            (uint112 reserveIn, uint112 reserveOut) = pair.token0() == from\\n                ? (reserve0, reserve1)\\n                : (reserve1, reserve0);\\n            return getAmountOut(amountIn, reserveIn, reserveOut, fee);\\n        } catch {\\n            return 0;\\n        }\\n    }\\n\\n    function getAmountOut(\\n        uint256 amountIn,\\n        uint256 reserveIn,\\n        uint256 reserveOut,\\n        uint256 feeK\\n    ) internal pure returns (uint256 amountOut) {\\n        uint256 amountInWithFee = amountIn * feeK;\\n        uint256 numerator = amountInWithFee * reserveOut;\\n        uint256 denominator = reserveIn * 10000 + amountInWithFee;\\n        amountOut = numerator / denominator;\\n    }\\n}\\n\",\"keccak256\":\"0x019b722d7f08a0b548f57346e8a30937d3ceea0b54ba6035251ff6ced8b82490\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60808060405234610016576105b9908161001c8239f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c631cc47f0e146100295750600080fd5b3461012b5760807ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc36011261012b576004356100648161012e565b61006f60243561012e565b6064359067ffffffffffffffff808311610127573660238401121561012757826004013590811161011a575b604051926100d160207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8501160185610181565b81845236602483830101116101165793602082610102959493602461011298018387013784010152604435906102ce565b6040519081529081906020820190565b0390f35b8480fd5b610122610151565b61009b565b8380fd5b80fd5b73ffffffffffffffffffffffffffffffffffffffff81160361014c57565b600080fd5b507f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b90601f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0910116810190811067ffffffffffffffff8211176101c257604052565b6101ca610151565b604052565b8051601410156101df5760340190565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b507f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b61271081811061024c570390565b61025461020e565b0390565b51906dffffffffffffffffffffffffffff8216820361014c57565b9081606091031261014c5761028781610258565b91604061029660208401610258565b92015163ffffffff8116810361014c5790565b506040513d6000823e3d90fd5b9081602091031261014c57516102cb8161012e565b90565b9190610359610340601461032461031f6103196103136102ed896101cf565b517fff000000000000000000000000000000000000000000000000000000000000001690565b60f81c90565b60ff1690565b61023e565b94015173ffffffffffffffffffffffffffffffffffffffff1690565b73ffffffffffffffffffffffffffffffffffffffff1690565b906040517f0902f1ac000000000000000000000000000000000000000000000000000000008152606081600481865afa92836000928395610468575b506103a557505050505050600090565b6102cb956020600492604051938480927f0dfe16810000000000000000000000000000000000000000000000000000000082525afa91821561045b575b60009261042b575b5073ffffffffffffffffffffffffffffffffffffffff91821691160361042657915b6dffffffffffffffffffffffffffff8091169216906104dc565b61040c565b61044d91925060203d8111610454575b6104458183610181565b8101906102b6565b90386103ea565b503d61043b565b6104636102a9565b6103e2565b90945061048d91925060603d8111610498575b6104858183610181565b810190610273565b509190919338610395565b503d61047b565b807fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff048211811515166104d0570290565b6104d861020e565b0290565b6104f191936104ea9161049f565b918261049f565b9161271090807fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff04821181151516610576575b0281198111610569575b0190811561053a570490565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b61057161020e565b61052e565b61057e61020e565b61052456fea26469706673582212201b57626027dfd73456ab5606e0f2bc49d4ebc012d5177f2eab7f4a7644182f1564736f6c634300080d0033",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b6000803560e01c631cc47f0e146100295750600080fd5b3461012b5760807ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc36011261012b576004356100648161012e565b61006f60243561012e565b6064359067ffffffffffffffff808311610127573660238401121561012757826004013590811161011a575b604051926100d160207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8501160185610181565b81845236602483830101116101165793602082610102959493602461011298018387013784010152604435906102ce565b6040519081529081906020820190565b0390f35b8480fd5b610122610151565b61009b565b8380fd5b80fd5b73ffffffffffffffffffffffffffffffffffffffff81160361014c57565b600080fd5b507f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b90601f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0910116810190811067ffffffffffffffff8211176101c257604052565b6101ca610151565b604052565b8051601410156101df5760340190565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b507f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b61271081811061024c570390565b61025461020e565b0390565b51906dffffffffffffffffffffffffffff8216820361014c57565b9081606091031261014c5761028781610258565b91604061029660208401610258565b92015163ffffffff8116810361014c5790565b506040513d6000823e3d90fd5b9081602091031261014c57516102cb8161012e565b90565b9190610359610340601461032461031f6103196103136102ed896101cf565b517fff000000000000000000000000000000000000000000000000000000000000001690565b60f81c90565b60ff1690565b61023e565b94015173ffffffffffffffffffffffffffffffffffffffff1690565b73ffffffffffffffffffffffffffffffffffffffff1690565b906040517f0902f1ac000000000000000000000000000000000000000000000000000000008152606081600481865afa92836000928395610468575b506103a557505050505050600090565b6102cb956020600492604051938480927f0dfe16810000000000000000000000000000000000000000000000000000000082525afa91821561045b575b60009261042b575b5073ffffffffffffffffffffffffffffffffffffffff91821691160361042657915b6dffffffffffffffffffffffffffff8091169216906104dc565b61040c565b61044d91925060203d8111610454575b6104458183610181565b8101906102b6565b90386103ea565b503d61043b565b6104636102a9565b6103e2565b90945061048d91925060603d8111610498575b6104858183610181565b810190610273565b509190919338610395565b503d61047b565b807fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff048211811515166104d0570290565b6104d861020e565b0290565b6104f191936104ea9161049f565b918261049f565b9161271090807fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff04821181151516610576575b0281198111610569575b0190811561053a570490565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b61057161020e565b61052e565b61057e61020e565b61052456fea26469706673582212201b57626027dfd73456ab5606e0f2bc49d4ebc012d5177f2eab7f4a7644182f1564736f6c634300080d0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
