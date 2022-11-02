@@ -16,6 +16,7 @@ contract AaveV2Multicall is Ownable {
         uint256 totalDeposited;
         uint256 liquidityRate;
         bool usageAsCollateralEnabled;
+        bool borrowingEnabled;
         bool isUsingAsCollateral;
         bool isBorrowing;
         // Stable Debt
@@ -44,6 +45,18 @@ contract AaveV2Multicall is Ownable {
             DataTypes.ReserveData memory reserveData = lendingPool
                 .getReserveData(reserveList[i]);
             (
+                ,
+                ,
+                ,
+                ,
+                ,
+                bool usageAsCollateralEnabled,
+                bool borrowingEnabled,
+                ,
+                ,
+
+            ) = dataProvider.getReserveConfigurationData(reserveList[i]);
+            (
                 uint256 currentATokenBalance,
                 uint256 currentStableDebt,
                 uint256 currentVariableDebt,
@@ -52,7 +65,7 @@ contract AaveV2Multicall is Ownable {
                 uint256 userStableBorrowRate,
                 uint256 liquidityRate,
                 ,
-                bool usageAsCollateralEnabled
+
             ) = dataProvider.getUserReserveData(reserveList[i], user);
 
             reserves[i] = AaveReserve(
@@ -61,6 +74,7 @@ contract AaveV2Multicall is Ownable {
                 currentATokenBalance,
                 liquidityRate,
                 usageAsCollateralEnabled,
+                borrowingEnabled,
                 userConfig.isUsingAsCollateral(i),
                 userConfig.isBorrowing(i),
                 currentStableDebt,
