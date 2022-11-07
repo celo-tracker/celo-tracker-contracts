@@ -1,0 +1,75 @@
+{
+  "address": "0xD983FE1235A4C9006Ef65eCeED7c33069aD35Ad0",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "getQuote",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x147690c98cd33f884bb746d9f32e0c66cb9f49a4153eef25a6083d38a25aebfe",
+  "receipt": {
+    "to": null,
+    "from": "0x4A9797f16b7c0d66814988B167285394750cfb8b",
+    "contractAddress": "0xD983FE1235A4C9006Ef65eCeED7c33069aD35Ad0",
+    "transactionIndex": 0,
+    "gasUsed": "207388",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x6a3b0a7cb8548f225852b72ac22fdf97741bd5c466282fdf9ef270ee9e916b5b",
+    "transactionHash": "0x147690c98cd33f884bb746d9f32e0c66cb9f49a4153eef25a6083d38a25aebfe",
+    "logs": [],
+    "blockNumber": 34443295,
+    "cumulativeGasUsed": "207388",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "631a0244aaad6fed5f663113f8a78c70",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountIn\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"getQuote\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/multicall/tokenPrices/VelodromeQuoter.sol\":\"VelodromeQuoter\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":999999},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/interfaces/velodrome/IPair.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.13;\\n\\ninterface IPair {\\n    function metadata()\\n        external\\n        view\\n        returns (\\n            uint256 dec0,\\n            uint256 dec1,\\n            uint256 r0,\\n            uint256 r1,\\n            bool st,\\n            address t0,\\n            address t1\\n        );\\n\\n    function claimFees() external returns (uint256, uint256);\\n\\n    function tokens() external returns (address, address);\\n\\n    function transferFrom(\\n        address src,\\n        address dst,\\n        uint256 amount\\n    ) external returns (bool);\\n\\n    function permit(\\n        address owner,\\n        address spender,\\n        uint256 value,\\n        uint256 deadline,\\n        uint8 v,\\n        bytes32 r,\\n        bytes32 s\\n    ) external;\\n\\n    function swap(\\n        uint256 amount0Out,\\n        uint256 amount1Out,\\n        address to,\\n        bytes calldata data\\n    ) external;\\n\\n    function burn(address to)\\n        external\\n        returns (uint256 amount0, uint256 amount1);\\n\\n    function mint(address to) external returns (uint256 liquidity);\\n\\n    function getReserves()\\n        external\\n        view\\n        returns (\\n            uint256 _reserve0,\\n            uint256 _reserve1,\\n            uint256 _blockTimestampLast\\n        );\\n\\n    function getAmountOut(uint256, address) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xe4f1a3b8ac511c8d44daebc673c8840359c73a0ebcb728d6f2e72cff2d4562df\",\"license\":\"MIT\"},\"contracts/multicall/tokenPrices/Quoter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\ninterface Quoter {\\n    function getQuote(\\n        address from,\\n        address to,\\n        uint256 amountIn,\\n        bytes calldata data\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xdc5db2309094f2fdb997460bfb383893b9d408b8cca8fe4db527bc9bea5fc914\",\"license\":\"MIT\"},\"contracts/multicall/tokenPrices/VelodromeQuoter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.2;\\n\\nimport \\\"../../interfaces/velodrome/IPair.sol\\\";\\nimport \\\"./Quoter.sol\\\";\\n\\ncontract VelodromeQuoter is Quoter {\\n    function getQuote(\\n        address from,\\n        address,\\n        uint256 amountIn,\\n        bytes memory data\\n    ) external view returns (uint256) {\\n        address pairAddress;\\n        assembly {\\n            pairAddress := mload(add(data, 20))\\n        }\\n\\n        IPair pair = IPair(pairAddress);\\n\\n        try pair.getAmountOut(amountIn, from) returns (uint256 amountOut) {\\n            return amountOut;\\n        } catch {\\n            return 0;\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xab5d49485837c5891cd2452824ebe22fafa51a26e480b483b3aeedf67bdff50e\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60808060405234610016576102cc908161001c8239f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c631cc47f0e146100295750600080fd5b346101255760807ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc36011261012557610060610128565b610068610150565b506064359067ffffffffffffffff8083116101215736602384011215610121578260040135908111610114575b604051926100cb60207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f85011601856101a3565b818452366024838301011161011057936020826100fc959493602461010c98018387013784010152604435906101f1565b6040519081529081906020820190565b0390f35b8480fd5b61011c610173565b610095565b8380fd5b80fd5b6004359073ffffffffffffffffffffffffffffffffffffffff8216820361014b57565b600080fd5b6024359073ffffffffffffffffffffffffffffffffffffffff8216820361014b57565b507f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b90601f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0910116810190811067ffffffffffffffff8211176101e457604052565b6101ec610173565b604052565b604460209260149473ffffffffffffffffffffffffffffffffffffffff95869101511660405195869485937ff140a35a00000000000000000000000000000000000000000000000000000000855260048501521660248301525afa60009181610263575b506102605750600090565b90565b90916020823d821161028e575b8161027d602093836101a3565b810103126101255750519038610255565b3d915061027056fea2646970667358221220831d8fb04743752f98fad9bb4525fdd9336cd26e395c4cce9ccc08bf6d93538b64736f6c634300080d0033",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b6000803560e01c631cc47f0e146100295750600080fd5b346101255760807ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc36011261012557610060610128565b610068610150565b506064359067ffffffffffffffff8083116101215736602384011215610121578260040135908111610114575b604051926100cb60207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f85011601856101a3565b818452366024838301011161011057936020826100fc959493602461010c98018387013784010152604435906101f1565b6040519081529081906020820190565b0390f35b8480fd5b61011c610173565b610095565b8380fd5b80fd5b6004359073ffffffffffffffffffffffffffffffffffffffff8216820361014b57565b600080fd5b6024359073ffffffffffffffffffffffffffffffffffffffff8216820361014b57565b507f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b90601f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0910116810190811067ffffffffffffffff8211176101e457604052565b6101ec610173565b604052565b604460209260149473ffffffffffffffffffffffffffffffffffffffff95869101511660405195869485937ff140a35a00000000000000000000000000000000000000000000000000000000855260048501521660248301525afa60009181610263575b506102605750600090565b90565b90916020823d821161028e575b8161027d602093836101a3565b810103126101255750519038610255565b3d915061027056fea2646970667358221220831d8fb04743752f98fad9bb4525fdd9336cd26e395c4cce9ccc08bf6d93538b64736f6c634300080d0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
