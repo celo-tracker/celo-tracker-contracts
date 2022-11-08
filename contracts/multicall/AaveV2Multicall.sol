@@ -28,6 +28,11 @@ contract AaveV2Multicall is Ownable {
         uint256 variableDebt;
         address variableDebtToken;
         uint128 variableBorrowRate;
+        // Lending pool info
+        uint256 totalDeposits;
+        uint256 availableLiquidity;
+        uint256 totalStableDebt;
+        uint256 totalVariableDebt;
     }
 
     function getReservesWithUserData(
@@ -67,6 +72,20 @@ contract AaveV2Multicall is Ownable {
                 ,
 
             ) = dataProvider.getUserReserveData(reserveList[i], user);
+            (
+                uint256 availableLiquidity,
+                uint256 totalStableDebt,
+                uint256 totalVariableDebt,
+                ,
+                ,
+                ,
+                ,
+                ,
+                ,
+
+            ) = dataProvider.getReserveData(reserveList[i]);
+
+            uint256 totalDeposits = ERC20(reserveData.aTokenAddress).totalSupply();
 
             reserves[i] = AaveReserve(
                 reserveList[i],
@@ -83,7 +102,11 @@ contract AaveV2Multicall is Ownable {
                 userStableBorrowRate,
                 currentVariableDebt,
                 reserveData.variableDebtTokenAddress,
-                reserveData.currentVariableBorrowRate
+                reserveData.currentVariableBorrowRate,
+                totalDeposits,
+                availableLiquidity,
+                totalStableDebt,
+                totalVariableDebt
             );
         }
     }
