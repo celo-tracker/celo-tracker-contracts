@@ -58,4 +58,10 @@ interface IPair {
         );
 
     function getAmountOut(uint256, address) external view returns (uint256);
+
+    function token0() external view returns (address);
+
+    function token1() external view returns (address);
+
+    function stable() external view returns (bool);
 }

@@ -30,6 +30,8 @@ interface IVaultInfo {
 
     function closingFee() external view returns (uint256);
 
+    function getDebtCeiling() external view returns (uint256);
+
     function name() external view returns (string memory);
 }
 
